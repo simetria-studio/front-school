@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { setUnauthorizedHandler } from '../api/client'
+import { ApiError, setUnauthorizedHandler } from '../api/client'
 import {
   fetchMe,
   loginWithPassword,
@@ -12,15 +12,19 @@ import {
   getStoredToken,
   setStoredToken,
 } from '../lib/authStorage'
+import { extractLoginTokenFromResponse } from '../lib/authToken'
 import { AuthContext } from './auth-context'
 
 export function AuthProvider({ children }) {
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
   const [ready, setReady] = useState(false)
+  /** Token existe mas /auth/me falhou (rede, 5xx) — não apagar sessão. */
+  const [sessionRecoverable, setSessionRecoverable] = useState(false)
 
   const applySession = useCallback(async (token, tokenType) => {
     setStoredToken(token, tokenType)
+    setSessionRecoverable(false)
     const me = await fetchMe()
     setUser(me?.user ?? me?.data ?? me)
     return me
@@ -29,6 +33,7 @@ export function AuthProvider({ children }) {
   const clearSession = useCallback(() => {
     clearAuthStorage()
     setUser(null)
+    setSessionRecoverable(false)
   }, [])
 
   useEffect(() => {
@@ -43,14 +48,26 @@ export function AuthProvider({ children }) {
     ;(async () => {
       const token = getStoredToken()
       if (!token) {
-        if (!cancelled) setReady(true)
+        if (!cancelled) {
+          setSessionRecoverable(false)
+          setReady(true)
+        }
         return
       }
       try {
         const me = await fetchMe()
-        if (!cancelled) setUser(me?.user ?? me?.data ?? me)
-      } catch {
-        if (!cancelled) clearSession()
+        if (!cancelled) {
+          setUser(me?.user ?? me?.data ?? me)
+          setSessionRecoverable(false)
+        }
+      } catch (err) {
+        if (cancelled) return
+        if (err instanceof ApiError && err.status === 401) {
+          clearSession()
+        } else {
+          setUser(null)
+          setSessionRecoverable(true)
+        }
       } finally {
         if (!cancelled) setReady(true)
       }
@@ -63,11 +80,9 @@ export function AuthProvider({ children }) {
   const login = useCallback(
     async ({ username, password }) => {
       const res = await loginWithPassword({ username, password })
-      const token = res?.token ?? res?.access_token
-      const tokenType = res?.token_type || 'Bearer'
+      const { token, tokenType } = extractLoginTokenFromResponse(res)
       if (!token) throw new Error('Resposta sem token')
       await applySession(token, tokenType)
-      // Não sobrescrever com res.user: o perfil completo vem de GET /auth/me.
       return res
     },
     [applySession],
@@ -76,14 +91,33 @@ export function AuthProvider({ children }) {
   const loginQr = useCallback(
     async (qr_token) => {
       const res = await loginWithQr({ qr_token })
-      const token = res?.token ?? res?.access_token
-      const tokenType = res?.token_type || 'Bearer'
+      const { token, tokenType } = extractLoginTokenFromResponse(res)
       if (!token) throw new Error('Resposta sem token')
       await applySession(token, tokenType)
       return res
     },
     [applySession],
   )
+
+  const recoverSession = useCallback(async () => {
+    const token = getStoredToken()
+    if (!token) {
+      setSessionRecoverable(false)
+      return
+    }
+    try {
+      const me = await fetchMe()
+      setUser(me?.user ?? me?.data ?? me)
+      setSessionRecoverable(false)
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        clearSession()
+        navigate('/login', { replace: true })
+      } else {
+        setSessionRecoverable(true)
+      }
+    }
+  }, [clearSession, navigate])
 
   const logout = useCallback(async () => {
     try {
@@ -99,16 +133,19 @@ export function AuthProvider({ children }) {
     () => ({
       user,
       ready,
+      sessionRecoverable,
       login,
       loginQr,
       logout,
+      recoverSession,
       refreshMe: async () => {
         const me = await fetchMe()
         setUser(me?.user ?? me?.data ?? me)
+        setSessionRecoverable(false)
         return me
       },
     }),
-    [user, ready, login, loginQr, logout],
+    [user, ready, sessionRecoverable, login, loginQr, logout, recoverSession],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

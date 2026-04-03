@@ -310,6 +310,12 @@ body {
   object-fit: contain;
 }
 
+.gs-session-recover {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 .gs-brand {
   display: flex;
   align-items: center;

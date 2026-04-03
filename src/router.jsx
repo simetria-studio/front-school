@@ -17,8 +17,27 @@ import Ranking from './pages/Ranking'
 import Notificacoes from './pages/Notificacoes'
 import Unidades from './pages/Unidades'
 
+function LoginGate({ children }) {
+  const { user, ready, sessionRecoverable } = useAuth()
+  const token = getStoredToken()
+  if (!ready) {
+    return (
+      <div className="gs-loading">
+        <p>A preparar sessão…</p>
+      </div>
+    )
+  }
+  if (token && user) {
+    return <Navigate to="/" replace />
+  }
+  if (token && sessionRecoverable && !user) {
+    return <Navigate to="/" replace />
+  }
+  return children
+}
+
 function ProtectedLayout() {
-  const { user, ready } = useAuth()
+  const { user, ready, sessionRecoverable, recoverSession, logout } = useAuth()
   const token = getStoredToken()
 
   if (!ready) {
@@ -28,6 +47,34 @@ function ProtectedLayout() {
       </div>
     )
   }
+
+  if (token && sessionRecoverable && !user) {
+    return (
+      <div className="gs-public">
+        <div className="gs-public-inner gs-session-recover">
+          <p className="gs-tagline">
+            A tua sessão está guardada neste dispositivo, mas não foi possível validar com o
+            servidor. Verifica a ligação e tenta de novo.
+          </p>
+          <button
+            type="button"
+            className="gs-btn gs-btn--primary gs-btn--block"
+            onClick={() => recoverSession()}
+          >
+            Tentar novamente
+          </button>
+          <button
+            type="button"
+            className="gs-btn gs-btn--secondary gs-btn--block"
+            onClick={() => logout()}
+          >
+            Sair e usar outro QR
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   if (!token || !user) {
     return <Navigate to="/login" replace />
   }
@@ -37,8 +84,22 @@ function ProtectedLayout() {
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/qr" element={<QrLogin />} />
+      <Route
+        path="/login"
+        element={
+          <LoginGate>
+            <Login />
+          </LoginGate>
+        }
+      />
+      <Route
+        path="/qr"
+        element={
+          <LoginGate>
+            <QrLogin />
+          </LoginGate>
+        }
+      />
 
       <Route path="/" element={<ProtectedLayout />}>
         <Route index element={<Dashboard />} />
