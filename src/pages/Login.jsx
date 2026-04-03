@@ -1,13 +1,18 @@
 import { Link } from 'react-router-dom'
+import logoImg from '../assets/logo.png'
 
 export default function Login() {
   return (
     <div className="gs-public">
       <div className="gs-public-inner">
-        <div className="gs-brand">
-          <span className="gs-brand-mark" aria-hidden />
-          <span className="gs-brand-text">GAME SCHOOL</span>
-        </div>
+        <img
+          className="gs-login-logo"
+          src={logoImg}
+          alt="Game School"
+          width={280}
+          height={80}
+          decoding="async"
+        />
         <p className="gs-tagline">
           Inicia sessão ao escanear o QR Code com a câmara do teu dispositivo.
         </p>

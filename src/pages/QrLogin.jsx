@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ApiError } from '../api/client'
 import { useAuth } from '../hooks/useAuth'
+import { parseQrLoginToken } from '../lib/qrToken'
 
 export default function QrLogin() {
   const videoRef = useRef(null)
@@ -24,10 +25,15 @@ export default function QrLogin() {
         if (!result || handledRef.current) return
         const text = result.getText()
         if (!text?.trim()) return
+        const token = parseQrLoginToken(text)
+        if (!token) {
+          setError('QR inválido: não foi possível ler o token.')
+          return
+        }
         handledRef.current = true
         setScanning(false)
         setError('')
-        loginQr(text.trim())
+        loginQr(token)
           .then(() => navigate('/', { replace: true }))
           .catch((err) => {
             handledRef.current = false
@@ -75,10 +81,6 @@ export default function QrLogin() {
         </div>
 
         {error ? <p className="gs-alert gs-alert--error">{error}</p> : null}
-
-        <Link to="/login" className="gs-link-muted">
-          Inserir hash do QR manualmente
-        </Link>
       </div>
     </div>
   )

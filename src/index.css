@@ -302,6 +302,14 @@ body {
   max-width: 22rem;
 }
 
+.gs-login-logo {
+  display: block;
+  width: min(100%, 280px);
+  height: auto;
+  margin: 0 auto 1rem;
+  object-fit: contain;
+}
+
 .gs-brand {
   display: flex;
   align-items: center;
