@@ -1,0 +1,116 @@
+.gs-shell {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+.gs-shell-main {
+  flex: 1;
+  width: 100%;
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 1rem 1rem 1.5rem;
+  box-sizing: border-box;
+}
+
+.gs-shell-main--home {
+  padding: 0;
+  max-width: 100%;
+}
+
+.gs-dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  gap: 0.15rem;
+  padding: 0.55rem 0.35rem calc(0.55rem + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 35%);
+  z-index: 40;
+}
+
+.gs-dock-item {
+  flex: 1;
+  max-width: 4.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  text-decoration: none;
+  color: #5c4f38;
+  font-size: 0.55rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  text-align: center;
+}
+
+.gs-dock-circle-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.gs-dock-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 1.05rem;
+  height: 1.05rem;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #e53935;
+  color: #fff;
+  font-size: 0.58rem;
+  font-weight: 900;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.gs-dock-circle {
+  width: 3.35rem;
+  height: 3.35rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dock-color, #78909c);
+  box-shadow:
+    0 4px 0 rgba(0, 0, 0, 0.18),
+    0 6px 14px rgba(10, 22, 40, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.gs-dock-circle img {
+  width: 1.65rem;
+  height: 1.65rem;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.gs-dock-item--active .gs-dock-circle {
+  transform: translateY(-4px);
+  box-shadow:
+    0 5px 0 rgba(0, 0, 0, 0.22),
+    0 10px 22px rgba(10, 22, 40, 0.28);
+  border-color: rgba(255, 255, 255, 0.65);
+}
+
+.gs-dock-item--active .gs-dock-label {
+  color: var(--gs-ink);
+}
+
+.gs-dock-label {
+  min-height: 2lh;
+}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <circle cx="24" cy="24" r="22" fill="#E8B923" stroke="#B8890F" stroke-width="2"/>
+  <circle cx="24" cy="20" r="12" fill="#F5D76E" opacity="0.9"/>
+  <text x="24" y="28" text-anchor="middle" fill="#8A6A0A" font-size="14" font-weight="800" font-family="system-ui,sans-serif">C</text>
+</svg>
