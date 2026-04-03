@@ -1,45 +1,6 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { ApiError } from '../api/client'
-import { useAuth } from '../hooks/useAuth'
-
-/** Aceita a hash sozinha ou URL completa tipo .../login/qr/{hash} */
-function parseQrToken(input) {
-  const trimmed = input.trim()
-  if (!trimmed) return ''
-  const m = trimmed.match(/\/login\/qr\/([^/?#]+)/i)
-  if (m) return m[1]
-  return trimmed
-}
+import { Link } from 'react-router-dom'
 
 export default function Login() {
-  const navigate = useNavigate()
-  const { loginQr } = useAuth()
-  const [hash, setHash] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-
-  async function handleSubmit(e) {
-    e.preventDefault()
-    setError('')
-    const token = parseQrToken(hash)
-    if (!token) {
-      setError('Cole a hash ou o URL do QR.')
-      return
-    }
-    setLoading(true)
-    try {
-      await loginQr(token)
-      navigate('/', { replace: true })
-    } catch (err) {
-      const msg =
-        err instanceof ApiError ? err.message : err?.message || 'Falha no login'
-      setError(msg)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   return (
     <div className="gs-public">
       <div className="gs-public-inner">
@@ -48,39 +9,75 @@ export default function Login() {
           <span className="gs-brand-text">GAME SCHOOL</span>
         </div>
         <p className="gs-tagline">
-          <strong>Modo teste:</strong> cole a hash do QR ou o URL completo
-          (ex.: <code className="gs-code-inline">…/login/qr/…</code>).
+          Inicia sessão ao escanear o QR Code com a câmara do teu dispositivo.
         </p>
 
-        <form className="gs-form" onSubmit={handleSubmit}>
-          {error ? <p className="gs-alert gs-alert--error">{error}</p> : null}
-          <label className="gs-label">
-            Hash / URL do QR
-            <textarea
-              className="gs-input gs-textarea"
-              name="qr_hash"
-              value={hash}
-              onChange={(e) => setHash(e.target.value)}
-              placeholder="8j2myG9H… ou http://localhost:8000/login/qr/8j2myG9H…"
-              rows={3}
-              autoComplete="off"
-            />
-          </label>
-          <button
-            type="submit"
-            className="gs-btn gs-btn--primary gs-btn--block"
-            disabled={loading}
-          >
-            {loading ? 'A entrar…' : 'Entrar com hash'}
-          </button>
-        </form>
-
-        <div className="gs-divider">ou</div>
-
-        <Link to="/qr" className="gs-btn gs-btn--secondary gs-btn--block">
-          Escanear QR Code com a câmara
+        <Link to="/qr" className="gs-btn gs-btn--primary gs-btn--block">
+          Escanear QR Code
         </Link>
       </div>
     </div>
   )
 }
+
+/*
+ * ─── MODO TESTE: login por hash / URL (descomentar o bloco abaixo e substituir o componente acima) ───
+ *
+ * import { useState } from 'react'
+ * import { Link, useNavigate } from 'react-router-dom'
+ * import { ApiError } from '../api/client'
+ * import { useAuth } from '../hooks/useAuth'
+ *
+ * function parseQrToken(input) {
+ *   const trimmed = input.trim()
+ *   if (!trimmed) return ''
+ *   const m = trimmed.match(/\/login\/qr\/([^/?#]+)/i)
+ *   if (m) return m[1]
+ *   return trimmed
+ * }
+ *
+ * export default function Login() {
+ *   const navigate = useNavigate()
+ *   const { loginQr } = useAuth()
+ *   const [hash, setHash] = useState('')
+ *   const [error, setError] = useState('')
+ *   const [loading, setLoading] = useState(false)
+ *
+ *   async function handleSubmit(e) {
+ *     e.preventDefault()
+ *     setError('')
+ *     const token = parseQrToken(hash)
+ *     if (!token) {
+ *       setError('Cole a hash ou o URL do QR.')
+ *       return
+ *     }
+ *     setLoading(true)
+ *     try {
+ *       await loginQr(token)
+ *       navigate('/', { replace: true })
+ *     } catch (err) {
+ *       const msg =
+ *         err instanceof ApiError ? err.message : err?.message || 'Falha no login'
+ *       setError(msg)
+ *     } finally {
+ *       setLoading(false)
+ *     }
+ *   }
+ *
+ *   return (
+ *     <div className="gs-public">
+ *       <div className="gs-public-inner">
+ *         <div className="gs-brand">...</div>
+ *         <p className="gs-tagline">
+ *           <strong>Modo teste:</strong> cole a hash do QR ou o URL completo.
+ *         </p>
+ *         <form className="gs-form" onSubmit={handleSubmit}>...</form>
+ *         <div className="gs-divider">ou</div>
+ *         <Link to="/qr" className="gs-btn gs-btn--secondary gs-btn--block">
+ *           Escanear QR Code com a câmara
+ *         </Link>
+ *       </div>
+ *     </div>
+ *   )
+ * }
+ */
