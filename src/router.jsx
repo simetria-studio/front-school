@@ -3,7 +3,6 @@ import AppShell from './layouts/AppShell'
 import { useAuth } from './hooks/useAuth'
 import { getStoredToken } from './lib/authStorage'
 import Login from './pages/Login'
-import QrLogin from './pages/QrLogin'
 import Dashboard from './pages/Dashboard'
 import Conta from './pages/Conta'
 import Turmas from './pages/Turmas'
@@ -96,7 +95,7 @@ export default function AppRoutes() {
         path="/qr"
         element={
           <LoginGate>
-            <QrLogin />
+            <Navigate to="/login" replace />
           </LoginGate>
         }
       />
