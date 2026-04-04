@@ -45,8 +45,20 @@ export function normalizeAtitude(a) {
   return { title, subtitle, coins, xp, isNegative }
 }
 
+/**
+ * Valor para mostrar na lista: em penalidades a magnitude é sempre negativa
+ * (a API pode mandar +10 para “perde 10”).
+ */
+export function signedStatForAtitude(value, isNegative) {
+  if (value == null || Number.isNaN(value)) return null
+  const n = Number(value)
+  if (n === 0) return 0
+  if (isNegative) return -Math.abs(n)
+  return Math.abs(n)
+}
+
 export function formatDelta(n) {
   if (n == null || Number.isNaN(n) || n === 0) return '0'
   if (n > 0) return `+${n}`
-  return String(n)
+  return `-${Math.abs(n)}`
 }

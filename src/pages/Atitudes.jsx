@@ -5,14 +5,20 @@ import { iconCoin, iconXp } from '../assets/imgs'
 import { fetchAtitudes } from '../api/endpoints'
 import GameSchoolHeader from '../components/GameSchoolHeader'
 import PaginationBar from '../components/PaginationBar'
-import { formatDelta, normalizeAtitude } from '../lib/atitudeDisplay'
+import {
+  formatDelta,
+  normalizeAtitude,
+  signedStatForAtitude,
+} from '../lib/atitudeDisplay'
 import { unwrapList } from '../lib/listUtils'
 import './Atitudes.css'
 
 function AtitudeRow({ item }) {
   const { title, subtitle, coins, xp, isNegative } = normalizeAtitude(item)
-  const showCoins = coins != null && !Number.isNaN(coins) && coins !== 0
-  const showXp = xp != null && !Number.isNaN(xp) && xp !== 0
+  const coinsUi = signedStatForAtitude(coins, isNegative)
+  const xpUi = signedStatForAtitude(xp, isNegative)
+  const showCoins = coinsUi != null && !Number.isNaN(coinsUi) && coinsUi !== 0
+  const showXp = xpUi != null && !Number.isNaN(xpUi) && xpUi !== 0
 
   return (
     <article
@@ -28,13 +34,13 @@ function AtitudeRow({ item }) {
         <div className="gs-atitudes-row-values">
           {showCoins ? (
             <span className="gs-atitudes-val">
-              {formatDelta(coins)}
+              {formatDelta(coinsUi)}
               <img src={iconCoin} alt="" />
             </span>
           ) : null}
           {showXp ? (
             <span className="gs-atitudes-val">
-              {formatDelta(xp)}
+              {formatDelta(xpUi)}
               <img src={iconXp} alt="" />
             </span>
           ) : null}
