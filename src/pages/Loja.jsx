@@ -7,6 +7,7 @@ import { createPedido, fetchLojaItens } from '../api/endpoints'
 import GameSchoolHeader from '../components/GameSchoolHeader'
 import PaginationBar from '../components/PaginationBar'
 import { useAuth } from '../hooks/useAuth'
+import { getGameStats } from '../lib/gameStats'
 import { normalizeLojaItem } from '../lib/lojaDisplay'
 import { unwrapList } from '../lib/listUtils'
 import { getAlunoIdFromUser } from '../lib/userAluno'
@@ -15,6 +16,7 @@ import './Loja.css'
 export default function Loja() {
   const queryClient = useQueryClient()
   const { user } = useAuth()
+  const { coins: userCoins } = getGameStats(user)
   const alunoId = getAlunoIdFromUser(user)
   const [page, setPage] = useState(1)
   const [feedback, setFeedback] = useState({ type: '', text: '' })
@@ -57,7 +59,7 @@ export default function Loja() {
     },
   })
 
-  function handleBuy(idProduto) {
+  function handleBuy(row) {
     setFeedback({ type: '', text: '' })
     if (alunoId == null) {
       setFeedback({
@@ -66,7 +68,15 @@ export default function Loja() {
       })
       return
     }
-    buyMut.mutate(idProduto)
+    const price = Number(row?.priceCoins) || 0
+    if (userCoins < price) {
+      setFeedback({
+        type: 'err',
+        text: `Moedas insuficientes para comprar ${row?.title ?? 'este item'}.`,
+      })
+      return
+    }
+    buyMut.mutate(row.id)
   }
 
   return (
@@ -98,6 +108,8 @@ export default function Loja() {
             ) : (
               rows.map((item) => {
                 const row = normalizeLojaItem(item)
+                const hasEnoughCoins = userCoins >= (Number(row.priceCoins) || 0)
+                const canBuy = row.canBuy && hasEnoughCoins
                 return (
                   <div key={row.id} className="gs-loja-row">
                     <div className="gs-loja-row-main">
@@ -110,8 +122,9 @@ export default function Loja() {
                     <button
                       type="button"
                       className="gs-loja-buy"
-                      disabled={!row.canBuy || buyMut.isPending}
-                      onClick={() => handleBuy(row.id)}
+                      disabled={!canBuy || buyMut.isPending}
+                      onClick={() => handleBuy(row)}
+                      title={!hasEnoughCoins ? 'Moedas insuficientes' : undefined}
                     >
                       BUY
                     </button>
