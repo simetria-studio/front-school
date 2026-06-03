@@ -25,6 +25,8 @@ function extractRows(body) {
     'produtos',
     'notificacoes',
     'ranking',
+    'quizzes',
+    'tentativas',
   ]
   for (const k of altKeys) {
     if (Array.isArray(body[k])) return body[k]

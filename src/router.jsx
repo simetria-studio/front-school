@@ -15,6 +15,9 @@ import NovoPedido from './pages/NovoPedido'
 import Ranking from './pages/Ranking'
 import Notificacoes from './pages/Notificacoes'
 import Unidades from './pages/Unidades'
+import Quizzes from './pages/Quizzes'
+import QuizPlay from './pages/QuizPlay'
+import QuizTentativas from './pages/QuizTentativas'
 
 function LoginGate({ children }) {
   const { user, ready, sessionRecoverable } = useAuth()
@@ -113,6 +116,9 @@ export default function AppRoutes() {
         <Route path="ranking" element={<Ranking />} />
         <Route path="notificacoes" element={<Notificacoes />} />
         <Route path="unidades" element={<Unidades />} />
+        <Route path="quizzes" element={<Quizzes />} />
+        <Route path="quizzes/:id" element={<QuizPlay />} />
+        <Route path="quizzes/:id/tentativas" element={<QuizTentativas />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

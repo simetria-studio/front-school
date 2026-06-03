@@ -90,3 +90,22 @@ export function marcarTodasNotificacoesLidas() {
 export function marcarNotificacaoLida(id) {
   return apiRequest(`/notificacoes/${id}/marcar-lida`, { method: 'POST' })
 }
+
+export function fetchQuizzes(params) {
+  return apiRequest(`/quizzes${buildQuery(params)}`)
+}
+
+export function fetchQuiz(id) {
+  return apiRequest(`/quizzes/${id}`)
+}
+
+export function submitQuizTentativa(quizId, payload) {
+  return apiRequest(`/quizzes/${quizId}/tentativas`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function fetchQuizTentativas(quizId, params) {
+  return apiRequest(`/quizzes/${quizId}/tentativas${buildQuery(params)}`)
+}

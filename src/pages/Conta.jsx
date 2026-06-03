@@ -28,6 +28,9 @@ export default function Conta() {
         <Link className="gs-menu-link" to="/missoes">
           Missões <span className="gs-chevron">›</span>
         </Link>
+        <Link className="gs-menu-link" to="/quizzes">
+          Quizzes <span className="gs-chevron">›</span>
+        </Link>
         <Link className="gs-menu-link" to="/atitudes">
           Atitudes <span className="gs-chevron">›</span>
         </Link>

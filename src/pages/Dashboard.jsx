@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import GameSchoolHeader from '../components/GameSchoolHeader'
 import RewardCollectionModal from '../components/RewardCollectionModal'
 import { useAuth } from '../hooks/useAuth'
@@ -84,6 +85,10 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        <Link to="/quizzes" className="gs-home-quiz-cta">
+          QUIZZES
+        </Link>
       </section>
 
       <RewardCollectionModal
