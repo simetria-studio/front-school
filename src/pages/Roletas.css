@@ -1,0 +1,370 @@
+/* Lista de roletas — casino / prémios */
+
+.gs-roletas-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  min-height: calc(100svh - 5.75rem - env(safe-area-inset-bottom, 0px));
+  background: #0a1628;
+}
+
+.gs-roletas-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 0.85rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  background:
+    radial-gradient(
+      ellipse 120% 80% at 50% -10%,
+      rgba(255, 193, 7, 0.28) 0%,
+      rgba(255, 152, 0, 0.14) 35%,
+      transparent 65%
+    ),
+    linear-gradient(180deg, #1a1208 0%, #0a1628 45%, #061018 100%);
+}
+
+.gs-roletas-top {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.35rem 0 1rem;
+  max-width: 28rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.gs-roletas-back {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease;
+}
+
+.gs-roletas-back:hover {
+  transform: translateY(-1px);
+}
+
+.gs-roletas-title-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.gs-roletas-title {
+  margin: 0;
+  font-family: var(--gs-display);
+  font-size: clamp(1.35rem, 5vw, 1.65rem);
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-shadow:
+    0 0 20px rgba(255, 193, 7, 0.45),
+    0 2px 0 rgba(0, 0, 0, 0.35);
+}
+
+.gs-roletas-subtitle {
+  margin: 0.15rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 224, 178, 0.72);
+}
+
+.gs-roletas-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 28rem;
+  width: 100%;
+  margin: 0 auto;
+  padding-bottom: 0.5rem;
+}
+
+.gs-roletas-intro {
+  margin: 0 0 1rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: rgba(255, 224, 178, 0.78);
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border: 1px solid rgba(255, 193, 7, 0.18);
+}
+
+.gs-roletas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gs-roletas-card {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border-radius: 20px;
+  text-decoration: none;
+  color: inherit;
+  background: linear-gradient(165deg, #2a1f12 0%, #151008 100%);
+  border: 2px solid rgba(255, 193, 7, 0.28);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.35),
+    0 0 24px rgba(255, 152, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  animation: gs-roletas-rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes gs-roletas-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gs-roletas-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 193, 7, 0.55);
+  box-shadow:
+    0 14px 32px rgba(0, 0, 0, 0.4),
+    0 0 32px rgba(255, 152, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.gs-roletas-card-wheel {
+  flex-shrink: 0;
+  position: relative;
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+.gs-roletas-card-wheel-ring {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(145deg, #ffd54f 0%, #ff8f00 50%, #e65100 100%);
+  box-shadow:
+    0 0 16px rgba(255, 193, 7, 0.35),
+    inset 0 0 8px rgba(255, 255, 255, 0.25);
+}
+
+.gs-roletas-card-wheel-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.65rem;
+  background: #1a1208;
+  border: 2px solid rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+.gs-roletas-card-wheel-slices {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.35);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+.gs-roletas-card-wheel-hub {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #fff 0%, #bdbdbd 100%);
+  border: 2px solid #ff8f00;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  z-index: 2;
+}
+
+.gs-roletas-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.gs-roletas-card-title {
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1.25;
+  color: #fff;
+}
+
+.gs-roletas-card-desc {
+  margin: 0 0 0.55rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgba(255, 224, 178, 0.72);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.gs-roletas-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.gs-roletas-card-meta {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 193, 7, 0.85);
+}
+
+.gs-roletas-card-dots {
+  display: flex;
+  gap: 0.2rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.gs-roletas-card-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--dot-color) 70%, transparent);
+}
+
+.gs-roletas-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #1a1208;
+  background: linear-gradient(180deg, #ffd54f 0%, #ff8f00 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 10px rgba(255, 152, 0, 0.35);
+}
+
+.gs-roletas-empty {
+  text-align: center;
+  padding: 2.5rem 1.25rem;
+  border-radius: 20px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border: 1px dashed rgba(255, 193, 7, 0.22);
+}
+
+.gs-roletas-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 0.65rem;
+}
+
+.gs-roletas-empty-title {
+  margin: 0 0 0.4rem;
+  font-family: var(--gs-display);
+  font-size: 1.05rem;
+  color: #fff;
+}
+
+.gs-roletas-empty-text {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 224, 178, 0.65);
+  line-height: 1.4;
+}
+
+.gs-roletas-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.gs-roletas-skeleton {
+  height: 5.5rem;
+  border-radius: 20px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: gs-roletas-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes gs-roletas-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.gs-roletas-pager {
+  max-width: 28rem;
+  width: 100%;
+  margin: 0.85rem auto 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 193, 7, 0.12);
+}
+
+.gs-roletas-pager .gs-pagination {
+  justify-content: center;
+}
+
+.gs-roletas-pager .gs-pagination-meta {
+  color: rgba(255, 224, 178, 0.75);
+  font-weight: 700;
+}
+
+.gs-roletas-pager .gs-btn--ghost {
+  color: #ffca28;
+  border-color: rgba(255, 193, 7, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-roletas-card,
+  .gs-roletas-skeleton {
+    animation: none;
+  }
+}

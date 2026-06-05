@@ -109,3 +109,41 @@ export function submitQuizTentativa(quizId, payload) {
 export function fetchQuizTentativas(quizId, params) {
   return apiRequest(`/quizzes/${quizId}/tentativas${buildQuery(params)}`)
 }
+
+export function fetchRoletas(params) {
+  return apiRequest(`/roletas${buildQuery(params)}`)
+}
+
+export function fetchRoleta(id) {
+  return apiRequest(`/roletas/${id}`)
+}
+
+export function fetchRoletaStatus(id) {
+  return apiRequest(`/roletas/${id}/status`)
+}
+
+export function spinRoleta(id, payload) {
+  return apiRequest(`/roletas/${id}/giros`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function fetchRoletaGiros(id, params) {
+  return apiRequest(`/roletas/${id}/giros${buildQuery(params)}`)
+}
+
+export function fetchInventario(params) {
+  return apiRequest(`/inventario${buildQuery(params)}`)
+}
+
+export function enviarPresente(payload) {
+  return apiRequest('/presentes', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function fetchPresentes(params) {
+  return apiRequest(`/presentes${buildQuery(params)}`)
+}

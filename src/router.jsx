@@ -18,6 +18,11 @@ import Unidades from './pages/Unidades'
 import Quizzes from './pages/Quizzes'
 import QuizPlay from './pages/QuizPlay'
 import QuizTentativas from './pages/QuizTentativas'
+import Roletas from './pages/Roletas'
+import RoletaPlay from './pages/RoletaPlay'
+import RoletaGiros from './pages/RoletaGiros'
+import Inventario from './pages/Inventario'
+import Presentes from './pages/Presentes'
 
 function LoginGate({ children }) {
   const { user, ready, sessionRecoverable } = useAuth()
@@ -119,6 +124,11 @@ export default function AppRoutes() {
         <Route path="quizzes" element={<Quizzes />} />
         <Route path="quizzes/:id" element={<QuizPlay />} />
         <Route path="quizzes/:id/tentativas" element={<QuizTentativas />} />
+        <Route path="roletas" element={<Roletas />} />
+        <Route path="roletas/:id/giros" element={<RoletaGiros />} />
+        <Route path="roletas/:id" element={<RoletaPlay />} />
+        <Route path="inventario" element={<Inventario />} />
+        <Route path="presentes" element={<Presentes />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

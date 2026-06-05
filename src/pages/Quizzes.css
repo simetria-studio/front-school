@@ -283,26 +283,3 @@
   background: #c8e6c9;
   color: #2e7d32;
 }
-
-.gs-home-quiz-cta {
-  position: relative;
-  z-index: 1;
-  display: block;
-  max-width: 14rem;
-  margin: 1rem auto 0;
-  padding: 0.65rem 1rem;
-  text-align: center;
-  text-decoration: none;
-  font-family: var(--gs-display);
-  font-size: 0.95rem;
-  letter-spacing: 0.06em;
-  color: #fff;
-  background: linear-gradient(180deg, #8e24aa 0%, #6a1b9a 100%);
-  border-radius: 999px;
-  border: 3px solid #fff;
-  box-shadow: 0 4px 14px rgba(74, 20, 140, 0.35);
-}
-
-.gs-home-quiz-cta:hover {
-  filter: brightness(1.06);
-}

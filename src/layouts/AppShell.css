@@ -2,7 +2,7 @@
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
 }
 
 .gs-shell-main {
@@ -17,6 +17,10 @@
 .gs-shell-main--home {
   padding: 0;
   max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .gs-dock {
@@ -28,8 +32,12 @@
   justify-content: space-around;
   align-items: flex-end;
   gap: 0.15rem;
-  padding: 0.55rem 0.35rem calc(0.55rem + env(safe-area-inset-bottom, 0px));
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 35%);
+  padding: 0.65rem 0.35rem calc(0.6rem + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(180deg, #040810 0%, #0a1628 50%, #0d2137 100%);
+  border-top: 1px solid rgba(66, 165, 245, 0.22);
+  box-shadow:
+    0 -6px 32px rgba(10, 22, 40, 0.55),
+    inset 0 1px 0 rgba(66, 165, 245, 0.12);
   z-index: 40;
 }
 
@@ -39,26 +47,54 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.28rem;
   text-decoration: none;
-  color: #5c4f38;
+  color: rgba(255, 255, 255, 0.72);
   font-size: 0.55rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   line-height: 1.05;
   text-align: center;
+  position: relative;
+  padding-bottom: 0.1rem;
 }
 
 .gs-dock-circle-wrap {
   position: relative;
   display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gs-dock-neon {
+  position: absolute;
+  left: 50%;
+  bottom: -0.15rem;
+  transform: translateX(-50%);
+  width: 2.6rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--dock-color, #42a5f5);
+  opacity: 0.45;
+  filter: blur(3px);
+  box-shadow:
+    0 0 6px var(--dock-color),
+    0 0 14px var(--dock-color),
+    0 0 26px color-mix(in srgb, var(--dock-color) 55%, transparent);
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .gs-dock-badge {
   position: absolute;
   top: -4px;
   right: -6px;
+  z-index: 3;
   min-width: 1.05rem;
   height: 1.05rem;
   padding: 0 4px;
@@ -72,45 +108,125 @@
   align-items: center;
   justify-content: center;
   border: 2px solid #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  box-shadow:
+    0 0 8px rgba(229, 57, 53, 0.8),
+    0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
 .gs-dock-circle {
+  position: relative;
+  z-index: 1;
   width: 3.35rem;
   height: 3.35rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--dock-color, #78909c);
+  background: radial-gradient(
+    circle at 50% 30%,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(10, 22, 40, 0.88) 52%,
+    rgba(4, 8, 16, 0.96) 100%
+  );
+  border: 2px solid color-mix(in srgb, var(--dock-color) 50%, rgba(255, 255, 255, 0.25));
   box-shadow:
-    0 4px 0 rgba(0, 0, 0, 0.18),
-    0 6px 14px rgba(10, 22, 40, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.35);
+    0 4px 0 rgba(0, 0, 0, 0.28),
+    0 0 0 1px color-mix(in srgb, var(--dock-color) 30%, transparent),
+    0 0 14px color-mix(in srgb, var(--dock-color) 40%, transparent),
+    0 0 28px color-mix(in srgb, var(--dock-color) 22%, transparent),
+    inset 0 0 16px color-mix(in srgb, var(--dock-color) 18%, transparent);
   transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .gs-dock-circle img {
   width: 1.65rem;
   height: 1.65rem;
   object-fit: contain;
-  filter: brightness(0) invert(1);
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(0 0 1px var(--dock-color))
+    drop-shadow(0 0 4px var(--dock-color))
+    drop-shadow(0 0 10px color-mix(in srgb, var(--dock-color) 85%, transparent));
+  transition: filter 0.2s ease;
+}
+
+.gs-dock-item--active .gs-dock-neon {
+  opacity: 1;
+  width: 3.1rem;
+  height: 0.62rem;
+  filter: blur(4px);
+  box-shadow:
+    0 0 8px var(--dock-color),
+    0 0 18px var(--dock-color),
+    0 0 32px var(--dock-color),
+    0 0 48px color-mix(in srgb, var(--dock-color) 45%, transparent);
+  animation: gs-dock-neon-pulse 2.4s ease-in-out infinite;
 }
 
 .gs-dock-item--active .gs-dock-circle {
-  transform: translateY(-4px);
+  transform: translateY(-5px) scale(1.05);
+  border-color: color-mix(in srgb, var(--dock-color) 75%, #fff);
   box-shadow:
-    0 5px 0 rgba(0, 0, 0, 0.22),
-    0 10px 22px rgba(10, 22, 40, 0.28);
-  border-color: rgba(255, 255, 255, 0.65);
+    0 6px 0 rgba(0, 0, 0, 0.3),
+    0 0 0 2px color-mix(in srgb, var(--dock-color) 35%, transparent),
+    0 0 20px var(--dock-color),
+    0 0 36px color-mix(in srgb, var(--dock-color) 55%, transparent),
+    0 0 52px color-mix(in srgb, var(--dock-color) 30%, transparent),
+    inset 0 0 20px color-mix(in srgb, var(--dock-color) 28%, transparent);
+}
+
+.gs-dock-item--active .gs-dock-circle img {
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(0 0 2px #fff)
+    drop-shadow(0 0 6px var(--dock-color))
+    drop-shadow(0 0 14px var(--dock-color))
+    drop-shadow(0 0 22px color-mix(in srgb, var(--dock-color) 90%, transparent));
 }
 
 .gs-dock-item--active .gs-dock-label {
-  color: var(--gs-ink);
+  color: #fff;
+  text-shadow:
+    0 0 6px var(--dock-color),
+    0 0 12px color-mix(in srgb, var(--dock-color) 60%, transparent);
+}
+
+.gs-dock-item:hover:not(.gs-dock-item--active) .gs-dock-neon {
+  opacity: 0.65;
+}
+
+.gs-dock-item:hover:not(.gs-dock-item--active) .gs-dock-circle {
+  box-shadow:
+    0 4px 0 rgba(0, 0, 0, 0.28),
+    0 0 0 1px color-mix(in srgb, var(--dock-color) 35%, transparent),
+    0 0 18px color-mix(in srgb, var(--dock-color) 50%, transparent),
+    0 0 32px color-mix(in srgb, var(--dock-color) 28%, transparent),
+    inset 0 0 16px color-mix(in srgb, var(--dock-color) 22%, transparent);
 }
 
 .gs-dock-label {
   min-height: 2lh;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+@keyframes gs-dock-neon-pulse {
+  0%,
+  100% {
+    opacity: 0.85;
+    transform: translateX(-50%) scaleX(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scaleX(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-dock-item--active .gs-dock-neon {
+    animation: none;
+  }
 }

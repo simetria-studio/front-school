@@ -1,0 +1,561 @@
+/* Inventário — coleção estilo game vault */
+
+.gs-inv-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  min-height: calc(100svh - 5.75rem - env(safe-area-inset-bottom, 0px));
+  background: #0a1628;
+}
+
+.gs-inv-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 0.85rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  background:
+    radial-gradient(
+      ellipse 120% 80% at 50% -10%,
+      rgba(0, 188, 212, 0.35) 0%,
+      rgba(0, 131, 143, 0.18) 35%,
+      transparent 65%
+    ),
+    linear-gradient(180deg, #0d2137 0%, #0a1628 45%, #061018 100%);
+}
+
+.gs-inv-top {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.35rem 0 1rem;
+  max-width: 28rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.gs-inv-back {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.gs-inv-back:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.08) 100%);
+}
+
+.gs-inv-title-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.gs-inv-title {
+  margin: 0;
+  font-family: var(--gs-display);
+  font-size: clamp(1.35rem, 5vw, 1.65rem);
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-shadow:
+    0 0 20px rgba(0, 229, 255, 0.45),
+    0 2px 0 rgba(0, 0, 0, 0.35);
+}
+
+.gs-inv-subtitle {
+  margin: 0.15rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(178, 235, 242, 0.72);
+}
+
+.gs-inv-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 28rem;
+  width: 100%;
+  margin: 0 auto;
+  padding-bottom: 0.5rem;
+}
+
+.gs-inv-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+}
+
+.gs-inv-stat {
+  padding: 0.75rem 0.85rem;
+  border-radius: 16px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.gs-inv-stat-val {
+  display: block;
+  font-family: var(--gs-display);
+  font-size: 1.55rem;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
+}
+
+.gs-inv-stat-label {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(178, 235, 242, 0.65);
+}
+
+.gs-inv-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.gs-inv-chip {
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #e0f7fa;
+  background: rgba(0, 188, 212, 0.18);
+  border: 1px solid rgba(0, 229, 255, 0.22);
+}
+
+.gs-inv-cat {
+  margin-bottom: 1.15rem;
+  animation: gs-inv-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes gs-inv-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gs-inv-cat-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.65rem;
+  padding: 0 0.1rem;
+}
+
+.gs-inv-cat-icon {
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  background: linear-gradient(145deg, rgba(0, 229, 255, 0.22) 0%, rgba(0, 131, 143, 0.15) 100%);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.15);
+}
+
+.gs-inv-cat-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.gs-inv-cat-text h3 {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.gs-inv-cat-meta {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(178, 235, 242, 0.58);
+}
+
+.gs-inv-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.gs-inv-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(165deg, #1a2a44 0%, #0f1929 100%);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  animation: gs-inv-card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--card-delay, 0s);
+}
+
+@keyframes gs-inv-card-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.gs-inv-card--comum {
+  border-color: rgba(144, 164, 174, 0.35);
+}
+
+.gs-inv-card--raro {
+  border-color: rgba(66, 165, 245, 0.55);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.35),
+    0 0 20px rgba(33, 150, 243, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.gs-inv-card--epico {
+  border-color: rgba(171, 71, 188, 0.6);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.35),
+    0 0 24px rgba(156, 39, 176, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.gs-inv-card--lendario {
+  border-color: rgba(255, 193, 7, 0.65);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.35),
+    0 0 28px rgba(255, 193, 7, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.gs-inv-card--lendario::before,
+.gs-inv-card--epico::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 70%
+  );
+  animation: gs-inv-shine 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes gs-inv-shine {
+  0%,
+  100% {
+    transform: translateX(-120%);
+  }
+  50% {
+    transform: translateX(120%);
+  }
+}
+
+.gs-inv-card-rarity {
+  position: relative;
+  z-index: 2;
+  padding: 0.32rem 0.5rem;
+  font-size: 0.5rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.gs-inv-card-rarity--comum {
+  color: #cfd8dc;
+  background: linear-gradient(90deg, rgba(96, 125, 139, 0.35), rgba(69, 90, 100, 0.25));
+}
+
+.gs-inv-card-rarity--raro {
+  color: #bbdefb;
+  background: linear-gradient(90deg, rgba(33, 150, 243, 0.45), rgba(13, 71, 161, 0.35));
+}
+
+.gs-inv-card-rarity--epico {
+  color: #e1bee7;
+  background: linear-gradient(90deg, rgba(156, 39, 176, 0.5), rgba(74, 20, 140, 0.4));
+}
+
+.gs-inv-card-rarity--lendario {
+  color: #fff8e1;
+  background: linear-gradient(90deg, rgba(255, 193, 7, 0.55), rgba(255, 152, 0, 0.45));
+}
+
+.gs-inv-card-visual {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 5.5rem;
+  padding: 0.65rem 0.5rem 0.35rem;
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      rgba(0, 229, 255, 0.12) 0%,
+      transparent 65%
+    );
+}
+
+.gs-inv-card-qty {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  min-width: 1.45rem;
+  height: 1.45rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.62rem;
+  font-weight: 900;
+  color: #fff;
+  background: linear-gradient(180deg, #ff7043 0%, #e64a19 100%);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.gs-inv-card-emoji {
+  font-size: 2.75rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35));
+}
+
+.gs-inv-card-img {
+  width: 4.25rem;
+  height: 4.25rem;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+}
+
+.gs-inv-card-foot {
+  position: relative;
+  z-index: 2;
+  padding: 0.45rem 0.55rem 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.gs-inv-card-name {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #fff;
+  text-align: center;
+  min-height: 2.2em;
+}
+
+.gs-inv-card-send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-top: 0.45rem;
+  padding: 0.38rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #e0f7fa;
+  background: linear-gradient(180deg, rgba(0, 188, 212, 0.35) 0%, rgba(0, 131, 143, 0.45) 100%);
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.gs-inv-card-send:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 229, 255, 0.25);
+}
+
+.gs-inv-empty {
+  text-align: center;
+  padding: 2.5rem 1.25rem;
+  border-radius: 20px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border: 1px dashed rgba(0, 229, 255, 0.25);
+}
+
+.gs-inv-empty-icon {
+  font-size: 3.5rem;
+  line-height: 1;
+  margin-bottom: 0.75rem;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
+.gs-inv-empty-title {
+  margin: 0 0 0.45rem;
+  font-family: var(--gs-display);
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.gs-inv-empty-text {
+  margin: 0 0 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: rgba(178, 235, 242, 0.7);
+}
+
+.gs-inv-empty-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 1rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(180deg, #ff9800 0%, #ef6c00 100%);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 16px rgba(239, 108, 0, 0.35);
+}
+
+.gs-inv-loading {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.gs-inv-skeleton {
+  height: 9.5rem;
+  border-radius: 18px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: gs-inv-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes gs-inv-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.gs-inv-footer {
+  max-width: 28rem;
+  width: 100%;
+  margin: 0.85rem auto 0;
+  padding-top: 0.25rem;
+}
+
+.gs-inv-presentes-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.gs-inv-presentes-cta:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 229, 255, 0.35);
+}
+
+.gs-inv-presentes-cta-label {
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.gs-inv-presentes-cta-sub {
+  display: block;
+  margin-top: 0.12rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: rgba(178, 235, 242, 0.65);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.gs-inv-presentes-chevron {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: rgba(0, 229, 255, 0.85);
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-inv-cat,
+  .gs-inv-card,
+  .gs-inv-card--lendario::before,
+  .gs-inv-card--epico::before,
+  .gs-inv-skeleton {
+    animation: none;
+  }
+}

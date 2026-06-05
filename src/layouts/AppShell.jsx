@@ -16,35 +16,35 @@ const tabs = [
     end: true,
     label: 'Início',
     img: navInicio,
-    color: '#546e7a',
+    color: '#42a5f5',
     badge: null,
   },
   {
     to: '/atitudes',
     label: 'Atitudes',
     img: navAtitudes,
-    color: '#e53935',
+    color: '#ff5252',
     badge: null,
   },
   {
     to: '/ranking',
     label: 'Ranking',
     img: navRanking,
-    color: '#1565c0',
+    color: '#448aff',
     badge: null,
   },
   {
     to: '/missoes',
     label: 'Missões',
     img: navMissoes,
-    color: '#f57c00',
+    color: '#ff9100',
     badge: 'missoes',
   },
   {
     to: '/loja',
     label: 'Loja',
     img: navLoja,
-    color: '#43a047',
+    color: '#69f0ae',
     badge: 'loja',
   },
 ]
@@ -61,7 +61,10 @@ export default function AppShell() {
     pathname === '/ranking' ||
     pathname === '/missoes' ||
     pathname === '/loja' ||
-    pathname.startsWith('/quizzes')
+    pathname.startsWith('/quizzes') ||
+    pathname.startsWith('/roletas') ||
+    pathname === '/inventario' ||
+    pathname === '/presentes'
 
   return (
     <div className="gs-shell">
@@ -88,9 +91,10 @@ export default function AppShell() {
               className={({ isActive }) =>
                 `gs-dock-item${isActive ? ' gs-dock-item--active' : ''}`
               }
-              style={{ '--dock-color': color }}
+              style={{ '--dock-color': color, '--dock-glow': color }}
             >
               <span className="gs-dock-circle-wrap">
+                <span className="gs-dock-neon" aria-hidden />
                 <span className="gs-dock-circle" aria-hidden>
                   <img src={img} alt="" width={36} height={36} />
                 </span>

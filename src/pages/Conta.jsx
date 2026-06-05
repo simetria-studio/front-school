@@ -31,6 +31,19 @@ export default function Conta() {
         <Link className="gs-menu-link" to="/quizzes">
           Quizzes <span className="gs-chevron">›</span>
         </Link>
+        <Link className="gs-menu-link" to="/roletas">
+          Roletas <span className="gs-chevron">›</span>
+        </Link>
+        {aluno ? (
+          <>
+            <Link className="gs-menu-link" to="/inventario">
+              Inventário <span className="gs-chevron">›</span>
+            </Link>
+            <Link className="gs-menu-link" to="/presentes">
+              Presentes <span className="gs-chevron">›</span>
+            </Link>
+          </>
+        ) : null}
         <Link className="gs-menu-link" to="/atitudes">
           Atitudes <span className="gs-chevron">›</span>
         </Link>
