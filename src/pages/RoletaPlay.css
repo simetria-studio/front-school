@@ -111,9 +111,25 @@
 .gs-roleta-play-toolbar {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 0.45rem;
   margin-bottom: 0.85rem;
+}
+
+.gs-roleta-play-status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.gs-roleta-play-status-meta {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: rgba(255, 224, 178, 0.58);
+  line-height: 1.35;
 }
 
 .gs-roleta-play-badge {
@@ -150,7 +166,7 @@
 .gs-roleta-play-links {
   display: flex;
   gap: 0.35rem;
-  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .gs-roleta-play-link {

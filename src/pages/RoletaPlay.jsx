@@ -14,6 +14,8 @@ import RoletaWinCelebration from '../components/RoletaWinCelebration'
 import { formatNumberPt } from '../lib/gameStats'
 import {
   findSegmentIndex,
+  formatRoletaFreeMeta,
+  formatRoletaFreeStatusLabel,
   normalizeGiroResult,
   normalizeRoletaDetail,
   normalizeRoletaStatus,
@@ -54,6 +56,11 @@ export default function RoletaPlay() {
   )
 
   const paidCost = status.paidCost ?? roleta.paidCost
+  const freeStatusLabel = formatRoletaFreeStatusLabel(status)
+  const freeStatusMeta = formatRoletaFreeMeta(status)
+  const showPaidSpin = !status.freeOnly && paidCost != null
+  const freeButtonLabel =
+    status.freeOnly && status.freeUnlimited ? 'Girar' : 'Giro grátis'
 
   const spinMut = useMutation({
     mutationFn: (tipo) => spinRoleta(id, { tipo }),
@@ -128,19 +135,36 @@ export default function RoletaPlay() {
               ) : null}
 
               <div className="gs-roleta-play-toolbar">
-                {statusQuery.isLoading ? (
-                  <span className="gs-roleta-play-badge gs-roleta-play-badge--loading">
-                    A verificar…
-                  </span>
-                ) : status.freeSpinAvailable ? (
-                  <span className="gs-roleta-play-badge gs-roleta-play-badge--ok">
-                    ✓ Giro grátis
-                  </span>
-                ) : (
-                  <span className="gs-roleta-play-badge gs-roleta-play-badge--muted">
-                    Sem giro grátis
-                  </span>
-                )}
+                <div className="gs-roleta-play-status">
+                  {statusQuery.isLoading ? (
+                    <span className="gs-roleta-play-badge gs-roleta-play-badge--loading">
+                      A verificar…
+                    </span>
+                  ) : (
+                    <>
+                      <span
+                        className={`gs-roleta-play-badge${
+                          status.freeSpinAvailable
+                            ? ' gs-roleta-play-badge--ok'
+                            : ' gs-roleta-play-badge--muted'
+                        }`}
+                      >
+                        {status.freeSpinAvailable ? '✓ ' : ''}
+                        {freeStatusLabel}
+                      </span>
+                      {freeStatusMeta ? (
+                        <span className="gs-roleta-play-status-meta">
+                          {freeStatusMeta}
+                        </span>
+                      ) : null}
+                      {showPaidSpin && status.coinsAluno != null ? (
+                        <span className="gs-roleta-play-status-meta">
+                          Tens {formatNumberPt(status.coinsAluno)} moedas
+                        </span>
+                      ) : null}
+                    </>
+                  )}
+                </div>
 
                 <div className="gs-roleta-play-links">
                   <Link
@@ -216,26 +240,37 @@ export default function RoletaPlay() {
                   disabled={busy || !status.freeSpinAvailable}
                   onClick={() => spin('gratis')}
                 >
-                  {spinMut.isPending && !spinning ? 'A girar…' : 'Giro grátis'}
+                  {spinMut.isPending && !spinning ? 'A girar…' : freeButtonLabel}
                   {!status.freeSpinAvailable && !statusQuery.isLoading ? (
                     <span className="gs-roleta-play-spin-sub">
-                      Indisponível agora
+                      {status.nextFreeAt
+                        ? formatRoletaFreeStatusLabel(status)
+                        : 'Indisponível agora'}
+                    </span>
+                  ) : freeStatusMeta && status.freeSpinAvailable ? (
+                    <span className="gs-roleta-play-spin-sub">
+                      {freeStatusMeta}
                     </span>
                   ) : null}
                 </button>
-                <button
-                  type="button"
-                  className="gs-roleta-play-spin gs-roleta-play-spin--paid"
-                  disabled={busy || status.canSpinPaid === false}
-                  onClick={() => spin('pago')}
-                >
-                  Giro pago
-                  {paidCost != null ? (
+                {showPaidSpin ? (
+                  <button
+                    type="button"
+                    className="gs-roleta-play-spin gs-roleta-play-spin--paid"
+                    disabled={
+                      busy ||
+                      status.canSpinPaid === false ||
+                      status.insufficientCoins
+                    }
+                    onClick={() => spin('pago')}
+                  >
+                    Giro pago
                     <span className="gs-roleta-play-spin-sub">
                       {formatNumberPt(paidCost)} moedas
+                      {status.insufficientCoins ? ' · saldo insuficiente' : ''}
                     </span>
-                  ) : null}
-                </button>
+                  </button>
+                ) : null}
               </div>
             </>
           )}

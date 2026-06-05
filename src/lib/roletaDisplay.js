@@ -189,32 +189,6 @@ export function normalizeRoletaDetail(body) {
   }
 }
 
-export function normalizeRoletaStatus(body) {
-  const data = body?.data && typeof body.data === 'object' ? body.data : body ?? {}
-  const freeRaw =
-    data.giro_gratis_disponivel ??
-    data.gratis_disponivel ??
-    data.pode_girar_gratis ??
-    data.tem_giro_gratis ??
-    data.free_spin_available
-  const freeSpinAvailable =
-    freeRaw === true ||
-    data.gratis === true ||
-    (freeRaw !== false && data.disponivel_gratis === true)
-  const paidCost = Number(
-    data.custo_pago ?? data.custo_giro ?? data.preco ?? NaN,
-  )
-  const canSpinPaid =
-    data.pode_girar_pago !== false && data.giro_pago_disponivel !== false
-
-  return {
-    freeSpinAvailable,
-    canSpinPaid,
-    paidCost: Number.isFinite(paidCost) ? paidCost : null,
-    raw: data,
-  }
-}
-
 function extractGiroPayload(resultBody) {
   const data =
     resultBody?.data && typeof resultBody.data === 'object'
@@ -340,6 +314,130 @@ function formatWhen(value) {
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+export function normalizeRoletaStatus(body) {
+  const data =
+    body?.data && typeof body.data === 'object' ? body.data : body ?? {}
+  const giroGratis =
+    data.giro_gratis && typeof data.giro_gratis === 'object'
+      ? data.giro_gratis
+      : {}
+
+  const freeOnly =
+    data.somente_gratis === true || giroGratis.somente_gratis === true
+  const freeUnlimited = giroGratis.ilimitado === true
+
+  let freeSpinAvailable =
+    giroGratis.disponivel === true ||
+    freeUnlimited ||
+    (freeOnly && freeUnlimited)
+
+  if (!freeSpinAvailable) {
+    const freeRaw =
+      data.giro_gratis_disponivel ??
+      data.gratis_disponivel ??
+      data.pode_girar_gratis ??
+      data.tem_giro_gratis ??
+      data.free_spin_available
+    freeSpinAvailable =
+      freeRaw === true ||
+      data.gratis === true ||
+      (freeRaw !== false && data.disponivel_gratis === true)
+  }
+
+  if (
+    !freeUnlimited &&
+    typeof giroGratis.restantes === 'number' &&
+    giroGratis.restantes <= 0
+  ) {
+    freeSpinAvailable = false
+  }
+
+  const paidCost = Number(
+    data.custo_coins ??
+      data.custo_pago ??
+      data.custo_giro ??
+      data.preco ??
+      NaN,
+  )
+  const coinsAluno = Number(data.coins_aluno ?? NaN)
+  const hasPaidCost = Number.isFinite(paidCost)
+  const hasCoins = Number.isFinite(coinsAluno)
+  const insufficientCoins = hasPaidCost && hasCoins && coinsAluno < paidCost
+
+  const canSpinPaid =
+    !freeOnly &&
+    data.pode_girar_pago !== false &&
+    data.giro_pago_disponivel !== false &&
+    !insufficientCoins
+
+  return {
+    freeSpinAvailable,
+    freeOnly,
+    freeUnlimited,
+    freeRemaining:
+      typeof giroGratis.restantes === 'number' ? giroGratis.restantes : null,
+    freeLimitWeek:
+      giroGratis.limite_semana ??
+      data.giros_gratis_por_semana ??
+      null,
+    freeUsedWeek:
+      typeof giroGratis.usados_semana === 'number'
+        ? giroGratis.usados_semana
+        : null,
+    nextFreeAt: giroGratis.proximo_gratis_em ?? null,
+    canSpinPaid,
+    paidCost: hasPaidCost ? paidCost : null,
+    coinsAluno: hasCoins ? coinsAluno : null,
+    insufficientCoins,
+    raw: data,
+  }
+}
+
+export function formatRoletaFreeStatusLabel(status) {
+  if (!status || typeof status !== 'object') return 'Sem giro grátis'
+
+  if (status.freeUnlimited) {
+    return status.freeOnly ? 'Roleta grátis' : 'Giros grátis ilimitados'
+  }
+
+  if (status.freeSpinAvailable && status.freeRemaining != null) {
+    const n = status.freeRemaining
+    return `${n} giro${n === 1 ? '' : 's'} grátis`
+  }
+
+  if (status.freeOnly && status.freeSpinAvailable) {
+    return 'Roleta grátis'
+  }
+
+  if (status.freeSpinAvailable) return 'Giro grátis disponível'
+
+  if (status.nextFreeAt) {
+    const when = formatWhen(status.nextFreeAt)
+    return when ? `Próximo grátis: ${when}` : 'Sem giro grátis'
+  }
+
+  return 'Sem giro grátis'
+}
+
+export function formatRoletaFreeMeta(status) {
+  if (!status || typeof status !== 'object') return null
+  if (status.freeUnlimited && !status.freeOnly) return null
+
+  const parts = []
+
+  if (
+    status.freeLimitWeek != null &&
+    status.freeUsedWeek != null &&
+    !status.freeUnlimited
+  ) {
+    parts.push(`${status.freeUsedWeek}/${status.freeLimitWeek} esta semana`)
+  } else if (status.freeLimitWeek != null && !status.freeUnlimited) {
+    parts.push(`${status.freeLimitWeek} grátis/semana`)
+  }
+
+  return parts.length ? parts.join(' · ') : null
 }
 
 export function normalizeGiroHistorico(g) {
