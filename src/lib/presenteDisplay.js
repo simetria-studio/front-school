@@ -11,7 +11,9 @@ function pickText(obj, keys, fallback = '') {
   if (!obj || typeof obj !== 'object') return fallback
   for (const k of keys) {
     const v = obj[k]
-    if (v != null && String(v).trim() !== '') return String(v).trim()
+    if (v == null) continue
+    if (typeof v === 'object') continue
+    if (String(v).trim() !== '') return String(v).trim()
   }
   return fallback
 }
@@ -47,21 +49,52 @@ export function normalizePresente(p) {
   return { id, remetente, itemName, emoji, mensagem, when, raw: p }
 }
 
+export function normalizeDestinatarioOption(row) {
+  const id = pickId(row, ['id', 'aluno_id', 'destinatario_id'])
+  const nome = pickText(row, ['nome', 'name', 'nome_destino'])
+  const turmaRef =
+    row.turma && typeof row.turma === 'object' ? row.turma : null
+  const turmaNome = pickText(turmaRef ?? row, ['turma_nome', 'nome_turma'], '')
+  const turmaLabel = turmaRef
+    ? pickText(turmaRef, ['nome', 'titulo', 'label'], turmaNome)
+    : turmaNome
+
+  return { id, nome, turmaNome: turmaLabel, raw: row }
+}
+
+export function parseDestinatariosResponse(body) {
+  if (!body) return []
+  if (Array.isArray(body)) return body.map(normalizeDestinatarioOption)
+  if (Array.isArray(body.data)) return body.data.map(normalizeDestinatarioOption)
+  return []
+}
+
 /** Monta corpo POST /presentes */
-export function buildPresentePayload({ destinatarioId, itemId, inventarioId, mensagem, tipo }) {
-  const payload = {}
-  if (destinatarioId != null && destinatarioId !== '') {
-    payload.destinatario_id = Number(destinatarioId) || destinatarioId
-    payload.id_destinatario = payload.destinatario_id
-  }
-  if (inventarioId != null && inventarioId !== '') {
-    payload.inventario_id = Number(inventarioId) || inventarioId
-  }
-  if (itemId != null && itemId !== '') {
-    payload.item_id = Number(itemId) || itemId
-    payload.emote_id = payload.item_id
+export function buildPresentePayload({
+  nomeDestino,
+  alunoItemId,
+  quantidade = 1,
+  mensagem,
+}) {
+  const payload = {
+    nome_destino: String(nomeDestino ?? '').trim(),
+    aluno_item_id: Number(alunoItemId) || alunoItemId,
+    quantidade: Math.max(1, Number(quantidade) || 1),
   }
   if (mensagem?.trim()) payload.mensagem = mensagem.trim()
-  if (tipo) payload.tipo = tipo
   return payload
+}
+
+export function parsePresenteSendResponse(body) {
+  const message = pickText(body, ['message', 'mensagem'], 'Presente enviado!')
+  const data = body?.data && typeof body.data === 'object' ? body.data : {}
+  const destinatario =
+    data.destinatario && typeof data.destinatario === 'object'
+      ? data.destinatario
+      : null
+  const destNome = pickText(destinatario, ['nome', 'name'])
+  const destId = pickId(destinatario, ['id'])
+  const quantidade = Number(data.quantidade ?? 1) || 1
+
+  return { message, destNome, destId, quantidade, raw: body }
 }

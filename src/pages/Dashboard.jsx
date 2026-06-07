@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { isAluno } from '../auth/userProfile'
 import GameSchoolHeader from '../components/GameSchoolHeader'
 import RewardCollectionModal from '../components/RewardCollectionModal'
 import { useAuth } from '../hooks/useAuth'
@@ -122,7 +123,7 @@ function StarMiniIcon() {
 
 function QuizBubbleIcon() {
   return (
-    <svg viewBox="0 0 36 36" aria-hidden className="gs-home-quiz-cta-icon-svg">
+    <svg viewBox="0 0 36 36" aria-hidden className="gs-home-action-icon-svg">
       <circle cx="18" cy="18" r="17" fill="rgba(255,255,255,0.22)" />
       <path
         d="M10 9h16a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-6.5l-5 4.2V24H10a3 3 0 0 1-3-3V12a3 3 0 0 1 3-3z"
@@ -140,6 +141,66 @@ function QuizBubbleIcon() {
         ?
       </text>
     </svg>
+  )
+}
+
+function RoletaWheelIcon() {
+  return (
+    <svg viewBox="0 0 36 36" aria-hidden className="gs-home-action-icon-svg">
+      <circle cx="18" cy="18" r="16" fill="rgba(255,255,255,0.18)" />
+      <circle cx="18" cy="18" r="13" fill="#fff" />
+      <path
+        d="M18 18 L18 5 A13 13 0 0 1 29.3 23 Z"
+        fill="#ff8f00"
+      />
+      <path
+        d="M18 18 L29.3 23 A13 13 0 0 1 6.7 23 Z"
+        fill="#e53935"
+      />
+      <path
+        d="M18 18 L6.7 23 A13 13 0 0 1 18 5 Z"
+        fill="#fdd835"
+      />
+      <circle cx="18" cy="18" r="4.5" fill="#bf360c" stroke="#fff" strokeWidth="1.5" />
+      <circle cx="18" cy="18" r="2" fill="#ffd54f" />
+    </svg>
+  )
+}
+
+function InventarioIcon() {
+  return (
+    <svg viewBox="0 0 36 36" aria-hidden className="gs-home-action-icon-svg">
+      <circle cx="18" cy="18" r="17" fill="rgba(255,255,255,0.18)" />
+      <path
+        d="M10 14h16l-1.2 14H11.2L10 14z"
+        fill="#fff"
+      />
+      <path
+        d="M13 14V11a5 5 0 0 1 10 0v3"
+        fill="none"
+        stroke="#fff"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      <rect x="14" y="18" width="3" height="3" rx="0.6" fill="#00838f" />
+      <rect x="19" y="18" width="3" height="3" rx="0.6" fill="#00838f" />
+      <rect x="14" y="23" width="8" height="2.5" rx="0.6" fill="#00acc1" />
+    </svg>
+  )
+}
+
+function HomeActionLink({ to, label, icon, variant, animateClass }) {
+  return (
+    <Link
+      to={to}
+      className={`gs-home-action-cta gs-home-action-cta--${variant} gs-home-animate ${animateClass}`}
+    >
+      <span className="gs-home-action-cta-icon">{icon}</span>
+      <span className="gs-home-action-cta-label">{label}</span>
+      <span className="gs-home-action-cta-chevron" aria-hidden>
+        ›
+      </span>
+    </Link>
   )
 }
 
@@ -174,6 +235,8 @@ export default function Dashboard() {
     Boolean(user) &&
     notifQuery.isFetched &&
     rewardPayload.hasPending
+
+  const aluno = isAluno(user)
 
   return (
     <div className="gs-home">
@@ -211,15 +274,33 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <Link to="/quizzes" className="gs-home-quiz-cta gs-home-animate gs-home-animate--3">
-          <span className="gs-home-quiz-cta-icon">
-            <QuizBubbleIcon />
-          </span>
-          <span className="gs-home-quiz-cta-label">QUIZZES</span>
-          <span className="gs-home-quiz-cta-chevron" aria-hidden>
-            ›
-          </span>
-        </Link>
+        <nav className="gs-home-actions gs-home-animate gs-home-animate--3" aria-label="Atalhos">
+          <HomeActionLink
+            to="/quizzes"
+            label="QUIZZES"
+            icon={<QuizBubbleIcon />}
+            variant="quiz"
+            animateClass=""
+          />
+          <div className="gs-home-actions-row">
+            <HomeActionLink
+              to="/roletas"
+              label="ROLETAS"
+              icon={<RoletaWheelIcon />}
+              variant="roleta"
+              animateClass="gs-home-animate--4"
+            />
+            {aluno ? (
+              <HomeActionLink
+                to="/inventario"
+                label="INVENTÁRIO"
+                icon={<InventarioIcon />}
+                variant="inventario"
+                animateClass="gs-home-animate--4"
+              />
+            ) : null}
+          </div>
+        </nav>
       </section>
 
       <RewardCollectionModal

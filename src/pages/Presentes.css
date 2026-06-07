@@ -194,6 +194,117 @@
     0 0 0 3px rgba(236, 64, 122, 0.18);
 }
 
+.gs-gift-autocomplete {
+  position: relative;
+  margin-bottom: 0.85rem;
+}
+
+.gs-gift-selected-dest {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.45rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 12px;
+  background: rgba(46, 125, 50, 0.18);
+  border: 1px solid rgba(102, 187, 106, 0.35);
+}
+
+.gs-gift-selected-dest-text {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #c8e6c9;
+  line-height: 1.35;
+}
+
+.gs-gift-selected-dest-turma {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: rgba(200, 230, 201, 0.72);
+}
+
+.gs-gift-selected-dest-clear {
+  flex-shrink: 0;
+  padding: 0.25rem 0.45rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #ffcdd2;
+  background: rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+.gs-gift-autocomplete-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.35rem);
+  z-index: 20;
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  border-radius: 14px;
+  background: #1a1024;
+  border: 1px solid rgba(244, 143, 177, 0.28);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  max-height: 11rem;
+  overflow-y: auto;
+}
+
+.gs-gift-autocomplete-option {
+  width: 100%;
+  padding: 0.55rem 0.6rem;
+  border: none;
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  color: #fff;
+  transition: background 0.12s ease;
+}
+
+.gs-gift-autocomplete-option:hover,
+.gs-gift-autocomplete-option:focus-visible {
+  background: rgba(236, 64, 122, 0.18);
+  outline: none;
+}
+
+.gs-gift-autocomplete-name {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.gs-gift-autocomplete-turma {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: rgba(248, 187, 208, 0.65);
+}
+
+.gs-gift-autocomplete-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: rgba(248, 187, 208, 0.5);
+}
+
+.gs-gift-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.gs-gift-qty-row .gs-gift-input {
+  max-width: 5rem;
+  text-align: center;
+}
+
 .gs-gift-picker-label {
   display: block;
   margin-bottom: 0.45rem;
@@ -283,12 +394,21 @@
 
 .gs-gift-pick-name {
   display: block;
-  padding: 0.35rem 0.3rem 0.45rem;
+  padding: 0.35rem 0.3rem 0.15rem;
   font-size: 0.58rem;
   font-weight: 800;
   line-height: 1.2;
   color: #fff;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.gs-gift-pick-qty {
+  display: block;
+  padding: 0 0.3rem 0.35rem;
+  font-size: 0.52rem;
+  font-weight: 800;
+  color: rgba(248, 187, 208, 0.75);
   background: rgba(0, 0, 0, 0.2);
 }
 

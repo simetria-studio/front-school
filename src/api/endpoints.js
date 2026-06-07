@@ -144,6 +144,10 @@ export function enviarPresente(payload) {
   })
 }
 
+export function fetchPresenteDestinatarios(params) {
+  return apiRequest(`/presentes/autocomplete${buildQuery(params)}`)
+}
+
 export function fetchPresentes(params) {
   return apiRequest(`/presentes${buildQuery(params)}`)
 }

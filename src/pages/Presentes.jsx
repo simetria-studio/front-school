@@ -1,8 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ApiError } from '../api/client'
-import { enviarPresente, fetchInventario, fetchPresentes } from '../api/endpoints'
+import {
+  enviarPresente,
+  fetchInventario,
+  fetchPresenteDestinatarios,
+  fetchPresentes,
+} from '../api/endpoints'
 import GameSchoolHeader from '../components/GameSchoolHeader'
 import PaginationBar from '../components/PaginationBar'
 import {
@@ -12,6 +17,8 @@ import {
 import {
   buildPresentePayload,
   normalizePresente,
+  parseDestinatariosResponse,
+  parsePresenteSendResponse,
 } from '../lib/presenteDisplay'
 import { unwrapList } from '../lib/listUtils'
 import './Presentes.css'
@@ -61,9 +68,130 @@ function ItemPicker({ items, value, onChange, loading }) {
               )}
             </span>
             <span className="gs-gift-pick-name">{item.name}</span>
+            {item.quantidade > 1 ? (
+              <span className="gs-gift-pick-qty">×{item.quantidade}</span>
+            ) : null}
           </button>
         )
       })}
+    </div>
+  )
+}
+
+function DestinatarioAutocomplete({ value, onChange, disabled }) {
+  const [input, setInput] = useState(value?.nome ?? '')
+  const [debounced, setDebounced] = useState('')
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    setInput(value?.nome ?? '')
+  }, [value?.nome])
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(input.trim()), 320)
+    return () => clearTimeout(timer)
+  }, [input])
+
+  const searchQuery = useQuery({
+    queryKey: ['presentes', 'autocomplete', debounced],
+    queryFn: () => fetchPresenteDestinatarios({ nome: debounced }),
+    enabled: debounced.length >= 2 && !value && open,
+    select: parseDestinatariosResponse,
+    staleTime: 30_000,
+  })
+
+  const options = Array.isArray(searchQuery.data) ? searchQuery.data : []
+  const showList =
+    open &&
+    !value &&
+    debounced.length >= 2 &&
+    (searchQuery.isFetching || options.length > 0)
+
+  function handleInputChange(next) {
+    setInput(next)
+    setOpen(true)
+    if (value) onChange(null)
+  }
+
+  function pickOption(option) {
+    onChange(option)
+    setInput(option.nome)
+    setOpen(false)
+  }
+
+  return (
+    <div className="gs-gift-autocomplete">
+      <label className="gs-gift-field" style={{ marginBottom: 0 }}>
+        <span className="gs-gift-field-label">Destinatário</span>
+        <input
+          className="gs-gift-input"
+          type="text"
+          autoComplete="off"
+          required={!value}
+          disabled={disabled}
+          placeholder="Nome do colega…"
+          value={input}
+          onChange={(e) => handleInputChange(e.target.value)}
+          onFocus={() => setOpen(true)}
+          onBlur={() => {
+            window.setTimeout(() => setOpen(false), 150)
+          }}
+        />
+      </label>
+
+      {!value && debounced.length < 2 ? (
+        <p className="gs-gift-autocomplete-hint">
+          Escreve pelo menos 2 letras para procurar.
+        </p>
+      ) : null}
+
+      {value ? (
+        <div className="gs-gift-selected-dest">
+          <span className="gs-gift-selected-dest-text">
+            {value.nome}
+            {value.turmaNome ? (
+              <span className="gs-gift-selected-dest-turma">{value.turmaNome}</span>
+            ) : null}
+          </span>
+          <button
+            type="button"
+            className="gs-gift-selected-dest-clear"
+            onClick={() => {
+              onChange(null)
+              setInput('')
+              setOpen(true)
+            }}
+          >
+            Trocar
+          </button>
+        </div>
+      ) : null}
+
+      {showList ? (
+        <ul className="gs-gift-autocomplete-list" role="listbox">
+          {searchQuery.isFetching && options.length === 0 ? (
+            <li className="gs-gift-autocomplete-hint" style={{ padding: '0.5rem' }}>
+              A procurar…
+            </li>
+          ) : null}
+          {options.map((opt) => (
+            <li key={opt.id ?? opt.nome}>
+              <button
+                type="button"
+                role="option"
+                className="gs-gift-autocomplete-option"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => pickOption(opt)}
+              >
+                <span className="gs-gift-autocomplete-name">{opt.nome}</span>
+                {opt.turmaNome ? (
+                  <span className="gs-gift-autocomplete-turma">{opt.turmaNome}</span>
+                ) : null}
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </div>
   )
 }
@@ -100,14 +228,15 @@ export default function Presentes() {
   const prefillItem = searchParams.get('item') ?? ''
 
   const [page, setPage] = useState(1)
-  const [destinatarioId, setDestinatarioId] = useState('')
-  const [inventarioId, setInventarioId] = useState(prefillItem)
+  const [destinatario, setDestinatario] = useState(null)
+  const [alunoItemId, setAlunoItemId] = useState(prefillItem)
+  const [quantidade, setQuantidade] = useState(1)
   const [mensagem, setMensagem] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
   useEffect(() => {
-    if (prefillItem) setInventarioId(prefillItem)
+    if (prefillItem) setAlunoItemId(prefillItem)
   }, [prefillItem])
 
   const inventarioQuery = useQuery({
@@ -125,6 +254,18 @@ export default function Presentes() {
   })
 
   const sendableItems = getInventarioSendableItems(inventarioQuery.data)
+  const selectedItem = useMemo(
+    () =>
+      sendableItems.find((item) => String(item.id ?? '') === alunoItemId) ??
+      null,
+    [sendableItems, alunoItemId],
+  )
+  const maxQuantidade = selectedItem?.quantidade ?? 1
+
+  useEffect(() => {
+    if (quantidade > maxQuantidade) setQuantidade(maxQuantidade)
+  }, [maxQuantidade, quantidade])
+
   const rows = Array.isArray(presentesQuery.data?.data)
     ? presentesQuery.data.data
     : []
@@ -135,23 +276,23 @@ export default function Presentes() {
       : {}
 
   const sendMut = useMutation({
-    mutationFn: () => {
-      const selected = sendableItems.find(
-        (item) => String(item.id ?? '') === inventarioId,
-      )
-      return enviarPresente(
+    mutationFn: () =>
+      enviarPresente(
         buildPresentePayload({
-          destinatarioId,
-          inventarioId: inventarioId || undefined,
+          nomeDestino: destinatario?.nome,
+          alunoItemId: alunoItemId || undefined,
+          quantidade,
           mensagem,
-          tipo: selected?.tipo || undefined,
         }),
-      )
-    },
-    onSuccess: () => {
-      setSuccess('Presente enviado com sucesso!')
+      ),
+    onSuccess: (body) => {
+      const parsed = parsePresenteSendResponse(body)
+      const destLabel = parsed.destNome || destinatario?.nome || 'o colega'
+      setSuccess(parsed.message || `Presente enviado para ${destLabel}!`)
       setError('')
       setMensagem('')
+      setDestinatario(null)
+      setQuantidade(1)
       queryClient.invalidateQueries({ queryKey: ['inventario'] })
       queryClient.invalidateQueries({ queryKey: ['presentes'] })
     },
@@ -161,12 +302,16 @@ export default function Presentes() {
     e.preventDefault()
     setError('')
     setSuccess('')
-    if (!destinatarioId.trim()) {
-      setError('Indica o ID do destinatário.')
+    if (!destinatario?.nome?.trim()) {
+      setError('Escolhe um destinatário da lista.')
       return
     }
-    if (!inventarioId.trim()) {
+    if (!alunoItemId.trim()) {
       setError('Escolhe um item do inventário.')
+      return
+    }
+    if (quantidade < 1 || quantidade > maxQuantidade) {
+      setError(`Quantidade inválida (máx. ${maxQuantidade}).`)
       return
     }
     sendMut.mutate(undefined, {
@@ -207,32 +352,52 @@ export default function Presentes() {
               <p className="gs-gift-alert gs-gift-alert--success">{success}</p>
             ) : null}
 
-            <label className="gs-gift-field">
-              <span className="gs-gift-field-label">ID do destinatário</span>
-              <input
-                className="gs-gift-input"
-                inputMode="numeric"
-                required
-                placeholder="Ex: 12"
-                value={destinatarioId}
-                onChange={(e) => setDestinatarioId(e.target.value)}
-              />
-            </label>
+            <DestinatarioAutocomplete
+              value={destinatario}
+              onChange={setDestinatario}
+              disabled={sendMut.isPending}
+            />
 
             <span className="gs-gift-picker-label">Escolhe o item</span>
             <ItemPicker
               items={sendableItems}
-              value={inventarioId}
-              onChange={setInventarioId}
+              value={alunoItemId}
+              onChange={setAlunoItemId}
               loading={inventarioQuery.isLoading}
             />
+
+            {maxQuantidade > 1 ? (
+              <label className="gs-gift-field">
+                <span className="gs-gift-field-label">Quantidade</span>
+                <div className="gs-gift-qty-row">
+                  <input
+                    className="gs-gift-input"
+                    type="number"
+                    min={1}
+                    max={maxQuantidade}
+                    value={quantidade}
+                    onChange={(e) =>
+                      setQuantidade(
+                        Math.min(
+                          maxQuantidade,
+                          Math.max(1, Number(e.target.value) || 1),
+                        ),
+                      )
+                    }
+                  />
+                  <span className="gs-gift-autocomplete-hint">
+                    Máx. {maxQuantidade}
+                  </span>
+                </div>
+              </label>
+            ) : null}
 
             <label className="gs-gift-field">
               <span className="gs-gift-field-label">Mensagem (opcional)</span>
               <input
                 className="gs-gift-input"
                 maxLength={200}
-                placeholder="Escreve algo simpático…"
+                placeholder="Para você!"
                 value={mensagem}
                 onChange={(e) => setMensagem(e.target.value)}
               />
