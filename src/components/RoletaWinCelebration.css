@@ -173,6 +173,134 @@
   line-height: 1.25;
 }
 
+.gs-roleta-win-chest {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 0.85rem;
+  padding: 0.75rem 0.65rem 0.65rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 2px solid rgba(255, 143, 0, 0.25);
+  animation: gs-roleta-win-prize-bounce 0.7s cubic-bezier(0.22, 1.2, 0.36, 1) 0.2s both;
+}
+
+.gs-roleta-win-chest-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.55rem;
+}
+
+.gs-roleta-win-chest-icon {
+  width: 3.25rem;
+  height: 3.25rem;
+  object-fit: contain;
+}
+
+.gs-roleta-win-chest-icon-emoji {
+  font-size: 2.35rem;
+  line-height: 1;
+}
+
+.gs-roleta-win-chest-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #5d0000;
+  line-height: 1.2;
+}
+
+.gs-roleta-win-chest-sub {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e65100;
+}
+
+.gs-roleta-win-loot {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-height: 11.5rem;
+  overflow-y: auto;
+}
+
+.gs-roleta-win-loot-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.5rem;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fffdf5 0%, #fff3cd 100%);
+  border: 1.5px solid rgba(255, 179, 0, 0.35);
+  animation: gs-roleta-win-fade-up 0.45s ease both;
+}
+
+.gs-roleta-win-loot-img {
+  width: 2.35rem;
+  height: 2.35rem;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.gs-roleta-win-loot-emoji {
+  width: 2.35rem;
+  height: 2.35rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.65rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.gs-roleta-win-loot-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  text-align: left;
+}
+
+.gs-roleta-win-loot-name {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #5d0000;
+  line-height: 1.2;
+}
+
+.gs-roleta-win-loot-type {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #8d6e00;
+  text-transform: capitalize;
+}
+
+.gs-roleta-win-loot-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #e65100;
+}
+
+.gs-roleta-win-loot-meta img {
+  width: 1rem;
+  height: 1rem;
+}
+
+.gs-roleta-win-loot-meta--xp {
+  color: #2e7d32;
+}
+
 .gs-roleta-win-rewards {
   position: relative;
   z-index: 1;
@@ -304,6 +432,8 @@
   .gs-roleta-win-overlay,
   .gs-roleta-win-card,
   .gs-roleta-win-prize,
+  .gs-roleta-win-chest,
+  .gs-roleta-win-loot-item,
   .gs-roleta-win-prize-emoji,
   .gs-roleta-win-prize-img,
   .gs-roleta-win-rewards,

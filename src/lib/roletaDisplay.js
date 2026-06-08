@@ -260,12 +260,104 @@ export function findSegmentIndex(segments, resultBody) {
   return 0
 }
 
+function normalizeTipoKey(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+}
+
+export function isBauPrize(segment, result) {
+  const tipoCandidates = [
+    segment?.tipo,
+    segment?.raw?.tipo,
+    result?.segmento?.tipo,
+    segment?.raw?.item?.tipo,
+  ].map(normalizeTipoKey)
+
+  if (
+    tipoCandidates.some((t) =>
+      ['bau', 'chest', 'caixa', 'lootbox', 'loot_box'].includes(t),
+    )
+  ) {
+    return true
+  }
+
+  const title = String(
+    result?.prizeTitle ?? segment?.shortLabel ?? segment?.label ?? '',
+  ).toLowerCase()
+
+  return /\bbau\b|baú|chest|caixa/.test(title)
+}
+
+export function normalizeRoletaPremio(p, index = 0) {
+  if (!p || typeof p !== 'object') return null
+
+  const item = p.item && typeof p.item === 'object' ? p.item : p
+  const tipo = pickText(p, ['tipo', 'type'], pickText(item, ['tipo', 'type'], ''))
+  const tipoKey = normalizeTipoKey(tipo)
+
+  let titulo = pickText(item, ['titulo', 'nome'])
+  if (!titulo) titulo = pickText(p, ['titulo', 'nome'])
+
+  const coins = Number(p.coins ?? p.moedas ?? p.coins_ganho ?? 0) || 0
+  const xp = Number(p.xp ?? p.xp_ganho ?? 0) || 0
+
+  if (!titulo && tipoKey === 'coins') {
+    titulo = coins > 0 ? `${coins} Coins` : 'Coins'
+  }
+  if (!titulo && tipoKey === 'xp') {
+    titulo = xp > 0 ? `${xp} XP` : 'XP'
+  }
+  if (!titulo) titulo = `Prémio ${index + 1}`
+
+  const emoji =
+    item.emoji ??
+    p.emoji ??
+    (tipoKey === 'coins' ? '🪙' : tipoKey === 'xp' ? '⭐' : null)
+
+  const imageUrl =
+    item.imagem_url ??
+    item.image_url ??
+    p.imagem_url ??
+    p.image_url ??
+    null
+
+  const quantidade = Number(p.quantidade ?? p.qty ?? 1) || 1
+  const raridade = pickText(item, ['raridade'], pickText(p, ['raridade'], ''))
+
+  return {
+    titulo,
+    tipo,
+    tipoKey,
+    coins,
+    xp,
+    emoji,
+    imageUrl,
+    quantidade,
+    raridade,
+    raw: p,
+  }
+}
+
 export function normalizeGiroResult(body) {
   const data =
     body?.data && typeof body.data === 'object' ? body.data : body ?? {}
   const giro = extractGiroPayload(body)
   const segmento = giro.segmento ?? giro.segment ?? null
-  const premios = Array.isArray(giro.premios) ? giro.premios : []
+  const premios = Array.isArray(giro.premios)
+    ? giro.premios
+    : Array.isArray(giro.itens)
+      ? giro.itens
+      : Array.isArray(giro.conteudo)
+        ? giro.conteudo
+        : Array.isArray(giro.recompensas)
+          ? giro.recompensas
+          : []
+  const premiosNormalized = premios
+    .map((p, i) => normalizeRoletaPremio(p, i))
+    .filter(Boolean)
 
   let label = pickText(segmento, ['titulo', 'nome'])
   if (!label && premios.length) {
@@ -285,6 +377,7 @@ export function normalizeGiroResult(body) {
     prizeTitle: label,
     segmento,
     premios,
+    premiosNormalized,
     coins,
     xp,
     coinsAluno: data.coins_aluno,

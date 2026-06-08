@@ -1,0 +1,198 @@
+/* Tablet — conteúdo interno em largura total */
+
+@media (min-width: 640px) {
+  body {
+    background: #0a1628;
+  }
+
+  #root {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    box-shadow: none;
+  }
+
+  .gs-shell {
+    width: 100%;
+    max-width: none;
+    padding-bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .gs-shell-main {
+    max-width: none;
+    width: 100%;
+  }
+
+  .gs-dock {
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: auto;
+    max-width: none;
+    transform: none;
+    border-radius: 0;
+  }
+
+  .gs-home-body {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  .gs-home-actions,
+  .gs-home-greet,
+  .gs-home-hero {
+    width: 100%;
+    max-width: none;
+  }
+
+  .gs-home-actions {
+    width: calc(100% - 2rem);
+    max-width: none;
+  }
+
+  .gs-inv-top,
+  .gs-inv-scroll,
+  .gs-inv-footer,
+  .gs-gift-top,
+  .gs-gift-scroll,
+  .gs-gift-footer,
+  .gs-roletas-top,
+  .gs-roletas-scroll,
+  .gs-roleta-play-top,
+  .gs-roleta-play-scroll,
+  .gs-roletas-pager,
+  .gs-gift-pager,
+  .gs-missoes-modal,
+  .gs-missoes-pager,
+  .gs-atitudes-modal,
+  .gs-atitudes-pager,
+  .gs-ranking-modal,
+  .gs-ranking-pager,
+  .gs-loja-modal,
+  .gs-loja-pager,
+  .gs-quiz-modal,
+  .gs-quiz-pager,
+  .gs-roleta-modal,
+  .gs-roleta-pager {
+    max-width: none;
+    width: 100%;
+  }
+
+  .gs-missoes-backdrop,
+  .gs-atitudes-backdrop,
+  .gs-ranking-backdrop,
+  .gs-loja-backdrop,
+  .gs-quiz-backdrop {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .gs-roleta-wheel-wrap {
+    width: min(70%, 20rem);
+  }
+
+  .gs-roleta-play-wheel .gs-roleta-wheel-wrap {
+    width: min(75%, 22rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .gs-home-body {
+    padding: 2.25rem 1.5rem 2.75rem;
+  }
+
+  .gs-home-greet {
+    font-size: clamp(2rem, 4.5vw, 2.75rem);
+    margin-bottom: 1rem;
+  }
+
+  .gs-home-star-wrap {
+    width: min(55%, 24rem);
+  }
+
+  .gs-home-actions {
+    width: calc(100% - 2.5rem);
+    gap: 0.65rem;
+    margin-top: 1rem;
+  }
+
+  .gs-home-action-cta {
+    padding: 0.78rem 1.05rem 0.78rem 0.8rem;
+  }
+
+  .gs-home-action-cta-icon {
+    width: 2.55rem;
+    height: 2.55rem;
+  }
+
+  .gs-home-action-icon-svg {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .gs-home-action-cta--quiz .gs-home-action-cta-label {
+    font-size: 1.22rem;
+  }
+
+  .gs-home-action-cta-label {
+    font-size: 0.88rem;
+  }
+
+  .gs-dock-circle {
+    width: 3.65rem;
+    height: 3.65rem;
+  }
+
+  .gs-dock-circle img {
+    width: 1.85rem;
+    height: 1.85rem;
+  }
+
+  .gs-dock-label {
+    font-size: 0.6rem;
+  }
+
+  .gs-home-topbar {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    border-radius: 0 0 32px 32px;
+  }
+
+  .gs-inv-body,
+  .gs-gift-body,
+  .gs-roletas-body,
+  .gs-roleta-play-body {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gs-home-star-wrap {
+    width: min(50%, 26rem);
+  }
+
+  .gs-home-actions {
+    width: calc(100% - 3rem);
+  }
+}
+
+/* Landscape em tablets */
+@media (min-width: 640px) and (max-height: 520px) {
+  .gs-home-body {
+    padding-top: 1.25rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .gs-home-hero {
+    padding: 0;
+  }
+
+  .gs-home-star-wrap {
+    width: min(38vh, 18rem);
+  }
+
+  .gs-home-actions {
+    margin-top: 0.5rem;
+  }
+}

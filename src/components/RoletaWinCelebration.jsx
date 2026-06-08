@@ -1,8 +1,68 @@
 import { iconCoin, iconXp } from '../assets/imgs'
 import { formatNumberPt } from '../lib/gameStats'
+import { inventarioTipoLabel } from '../lib/inventarioDisplay'
+import { isBauPrize } from '../lib/roletaDisplay'
 import './RoletaWinCelebration.css'
 
 const CONFETTI_COUNT = 28
+
+function LootIcon({ item }) {
+  if (item.imageUrl) {
+    return (
+      <img
+        src={item.imageUrl}
+        alt=""
+        className="gs-roleta-win-loot-img"
+      />
+    )
+  }
+
+  return (
+    <span className="gs-roleta-win-loot-emoji" aria-hidden>
+      {item.emoji || '🎁'}
+    </span>
+  )
+}
+
+function LootMeta({ item }) {
+  if (item.tipoKey === 'coins' && item.coins > 0) {
+    return (
+      <span className="gs-roleta-win-loot-meta">
+        +{formatNumberPt(item.coins)}
+        <img src={iconCoin} alt="" />
+      </span>
+    )
+  }
+
+  if (item.tipoKey === 'xp' && item.xp > 0) {
+    return (
+      <span className="gs-roleta-win-loot-meta gs-roleta-win-loot-meta--xp">
+        +{formatNumberPt(item.xp)}
+        <img src={iconXp} alt="" />
+      </span>
+    )
+  }
+
+  if (item.coins > 0) {
+    return (
+      <span className="gs-roleta-win-loot-meta">
+        +{formatNumberPt(item.coins)}
+        <img src={iconCoin} alt="" />
+      </span>
+    )
+  }
+
+  if (item.xp > 0) {
+    return (
+      <span className="gs-roleta-win-loot-meta gs-roleta-win-loot-meta--xp">
+        +{formatNumberPt(item.xp)}
+        <img src={iconXp} alt="" />
+      </span>
+    )
+  }
+
+  return null
+}
 
 export default function RoletaWinCelebration({
   open,
@@ -18,6 +78,13 @@ export default function RoletaWinCelebration({
     'Prémio'
   const emoji = segment?.emoji ?? null
   const color = segment?.color ?? '#ffca28'
+  const isBau = isBauPrize(segment, result)
+  const loot = result.premiosNormalized ?? []
+  const showChestContents = isBau && loot.length > 0
+  const showTopRewards =
+    !showChestContents && (result.coins > 0 || result.xp > 0)
+  const showBonusRewards =
+    showChestContents && (result.coins > 0 || result.xp > 0)
 
   return (
     <div
@@ -58,26 +125,72 @@ export default function RoletaWinCelebration({
           Ganhou
         </h2>
 
-        <div className="gs-roleta-win-prize">
-          {segment?.imageUrl ? (
-            <img
-              src={segment.imageUrl}
-              alt=""
-              className="gs-roleta-win-prize-img"
-            />
-          ) : emoji ? (
-            <span className="gs-roleta-win-prize-emoji" aria-hidden>
-              {emoji}
-            </span>
-          ) : (
-            <span className="gs-roleta-win-prize-star" aria-hidden>
-              ★
-            </span>
-          )}
-          <span className="gs-roleta-win-prize-name">{prizeTitle}</span>
-        </div>
+        {showChestContents ? (
+          <div className="gs-roleta-win-chest">
+            <div className="gs-roleta-win-chest-head">
+              {segment?.imageUrl ? (
+                <img
+                  src={segment.imageUrl}
+                  alt=""
+                  className="gs-roleta-win-chest-icon"
+                />
+              ) : (
+                <span className="gs-roleta-win-chest-icon-emoji" aria-hidden>
+                  {emoji || '📦'}
+                </span>
+              )}
+              <span className="gs-roleta-win-chest-name">{prizeTitle}</span>
+            </div>
 
-        {(result.coins > 0 || result.xp > 0) && (
+            <p className="gs-roleta-win-chest-sub">Dentro do baú:</p>
+
+            <ul className="gs-roleta-win-loot">
+              {loot.map((item, index) => (
+                <li
+                  key={`${item.titulo}-${index}`}
+                  className="gs-roleta-win-loot-item"
+                  style={{ animationDelay: `${0.15 + index * 0.08}s` }}
+                >
+                  <LootIcon item={item} />
+                  <div className="gs-roleta-win-loot-info">
+                    <span className="gs-roleta-win-loot-name">
+                      {item.titulo}
+                      {item.quantidade > 1 ? ` ×${item.quantidade}` : ''}
+                    </span>
+                    {item.tipo && item.tipoKey !== 'coins' && item.tipoKey !== 'xp' ? (
+                      <span className="gs-roleta-win-loot-type">
+                        {inventarioTipoLabel(item.tipo)}
+                        {item.raridade ? ` · ${item.raridade}` : ''}
+                      </span>
+                    ) : null}
+                  </div>
+                  <LootMeta item={item} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div className="gs-roleta-win-prize">
+            {segment?.imageUrl ? (
+              <img
+                src={segment.imageUrl}
+                alt=""
+                className="gs-roleta-win-prize-img"
+              />
+            ) : emoji ? (
+              <span className="gs-roleta-win-prize-emoji" aria-hidden>
+                {emoji}
+              </span>
+            ) : (
+              <span className="gs-roleta-win-prize-star" aria-hidden>
+                ★
+              </span>
+            )}
+            <span className="gs-roleta-win-prize-name">{prizeTitle}</span>
+          </div>
+        )}
+
+        {showTopRewards || showBonusRewards ? (
           <div className="gs-roleta-win-rewards">
             {result.coins > 0 ? (
               <span className="gs-roleta-win-pill">
@@ -92,7 +205,7 @@ export default function RoletaWinCelebration({
               </span>
             ) : null}
           </div>
-        )}
+        ) : null}
 
         <button
           type="button"
