@@ -93,19 +93,25 @@ function DestinatarioAutocomplete({ value, onChange, disabled }) {
   }, [input])
 
   const searchQuery = useQuery({
-    queryKey: ['presentes', 'autocomplete', debounced],
-    queryFn: () => fetchPresenteDestinatarios({ nome: debounced }),
-    enabled: debounced.length >= 2 && !value && open,
+    queryKey: ['presentes', 'destinatarios', debounced],
+    queryFn: () => fetchPresenteDestinatarios({ search: debounced }),
+    enabled: debounced.length >= 2 && !value,
     select: parseDestinatariosResponse,
     staleTime: 30_000,
   })
 
   const options = Array.isArray(searchQuery.data) ? searchQuery.data : []
-  const showList =
-    open &&
-    !value &&
-    debounced.length >= 2 &&
-    (searchQuery.isFetching || options.length > 0)
+  const canSearch = !value && debounced.length >= 2
+  const showDropdown = open && canSearch
+  const showLoading =
+    showDropdown && searchQuery.isFetching && options.length === 0
+  const showEmpty =
+    showDropdown &&
+    searchQuery.isFetched &&
+    !searchQuery.isFetching &&
+    options.length === 0
+  const showError = showDropdown && searchQuery.isError
+  const showList = showDropdown && options.length > 0
 
   function handleInputChange(next) {
     setInput(next)
@@ -167,13 +173,24 @@ function DestinatarioAutocomplete({ value, onChange, disabled }) {
         </div>
       ) : null}
 
+      {showLoading ? (
+        <p className="gs-gift-autocomplete-status">A procurar…</p>
+      ) : null}
+
+      {showError ? (
+        <p className="gs-gift-autocomplete-status gs-gift-autocomplete-status--error">
+          Não foi possível procurar colegas. Tenta outra vez.
+        </p>
+      ) : null}
+
+      {showEmpty ? (
+        <p className="gs-gift-autocomplete-status">
+          Nenhum colega encontrado com &ldquo;{debounced}&rdquo;.
+        </p>
+      ) : null}
+
       {showList ? (
         <ul className="gs-gift-autocomplete-list" role="listbox">
-          {searchQuery.isFetching && options.length === 0 ? (
-            <li className="gs-gift-autocomplete-hint" style={{ padding: '0.5rem' }}>
-              A procurar…
-            </li>
-          ) : null}
           {options.map((opt) => (
             <li key={opt.id ?? opt.nome}>
               <button

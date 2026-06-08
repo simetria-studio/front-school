@@ -50,6 +50,14 @@ function pickText(obj, keys, fallback = '') {
   return fallback
 }
 
+export function normalizeTipoKey(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+}
+
 function isPremioLikeArray(arr) {
   if (!Array.isArray(arr) || arr.length === 0) return false
   return arr.every((x) => x && typeof x === 'object')
@@ -131,10 +139,16 @@ export function normalizeRoletaSegment(p, index) {
   const rawColor = pickText(p, ['cor', 'color', 'hex', 'cor_hex'], '')
   const color = rawColor || SEGMENT_COLORS[index % SEGMENT_COLORS.length]
 
+  const tipoKey = normalizeTipoKey(pickText(p, ['tipo', 'type'], item?.tipo ?? ''))
+
   const emoji =
     p.emoji ??
     item?.emoji ??
-    (p.tipo === 'coins' ? '🪙' : null)
+    (tipoKey === 'coins'
+      ? '🪙'
+      : tipoKey === 'item_aleatorio' || tipoKey === 'itemaleatorio'
+        ? '🎲'
+        : null)
 
   const imageUrl = item?.imagem_url ?? item?.image_url ?? null
 
@@ -260,21 +274,17 @@ export function findSegmentIndex(segments, resultBody) {
   return 0
 }
 
-function normalizeTipoKey(value) {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-}
-
-export function isBauPrize(segment, result) {
-  const tipoCandidates = [
+function collectTipoCandidates(segment, result) {
+  return [
     segment?.tipo,
     segment?.raw?.tipo,
     result?.segmento?.tipo,
     segment?.raw?.item?.tipo,
   ].map(normalizeTipoKey)
+}
+
+export function isBauPrize(segment, result) {
+  const tipoCandidates = collectTipoCandidates(segment, result)
 
   if (
     tipoCandidates.some((t) =>
@@ -289,6 +299,41 @@ export function isBauPrize(segment, result) {
   ).toLowerCase()
 
   return /\bbau\b|baú|chest|caixa/.test(title)
+}
+
+export function isItemAleatorioPrize(segment, result) {
+  const tipoCandidates = collectTipoCandidates(segment, result)
+
+  return tipoCandidates.some((t) =>
+    ['item_aleatorio', 'itemaleatorio', 'item_random', 'random_item'].includes(t),
+  )
+}
+
+export function getRevealPrizeMeta(segment, result) {
+  const loot = result?.premiosNormalized ?? []
+  if (!loot.length) return null
+
+  if (isBauPrize(segment, result)) {
+    return {
+      kind: 'bau',
+      title:
+        result?.prizeTitle ?? segment?.shortLabel ?? segment?.label ?? 'Baú',
+      subtitle: 'Dentro do baú:',
+      iconEmoji: segment?.emoji ?? '📦',
+    }
+  }
+
+  if (isItemAleatorioPrize(segment, result)) {
+    return {
+      kind: 'item_aleatorio',
+      title:
+        result?.prizeTitle ?? segment?.shortLabel ?? segment?.label ?? 'Item Surpresa',
+      subtitle: 'Sorteou:',
+      iconEmoji: segment?.emoji ?? '🎲',
+    }
+  }
+
+  return null
 }
 
 export function normalizeRoletaPremio(p, index = 0) {
@@ -359,11 +404,21 @@ export function normalizeGiroResult(body) {
     .map((p, i) => normalizeRoletaPremio(p, i))
     .filter(Boolean)
 
-  let label = pickText(segmento, ['titulo', 'nome'])
-  if (!label && premios.length) {
-    label = pickText(premios[0], ['titulo', 'nome'])
+  const segmentoTipo = normalizeTipoKey(pickText(segmento, ['tipo', 'type'], ''))
+  const isRandomItem =
+    segmentoTipo === 'item_aleatorio' || segmentoTipo === 'itemaleatorio'
+
+  let prizeTitle = pickText(segmento, ['titulo', 'nome'])
+  if (!prizeTitle && premios.length) {
+    prizeTitle = pickText(premios[0], ['titulo', 'nome'])
   }
-  if (!label) label = 'Prémio obtido!'
+  if (!prizeTitle) prizeTitle = 'Prémio obtido!'
+
+  const wonItemTitle =
+    premiosNormalized.length > 0 ? premiosNormalized[0].titulo : null
+
+  let label =
+    isRandomItem && wonItemTitle ? wonItemTitle : prizeTitle
 
   const coins = Number(giro.coins_ganho ?? giro.coins ?? 0) || 0
   const xp = Number(giro.xp_ganho ?? giro.xp ?? 0) || 0
@@ -374,7 +429,10 @@ export function normalizeGiroResult(body) {
 
   return {
     label: parts.join(' · '),
-    prizeTitle: label,
+    prizeTitle,
+    wonItemTitle,
+    segmentoTipo,
+    isRandomItem,
     segmento,
     premios,
     premiosNormalized,

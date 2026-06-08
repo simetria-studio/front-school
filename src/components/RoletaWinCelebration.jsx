@@ -1,7 +1,7 @@
 import { iconCoin, iconXp } from '../assets/imgs'
 import { formatNumberPt } from '../lib/gameStats'
 import { inventarioTipoLabel } from '../lib/inventarioDisplay'
-import { isBauPrize } from '../lib/roletaDisplay'
+import { getRevealPrizeMeta } from '../lib/roletaDisplay'
 import './RoletaWinCelebration.css'
 
 const CONFETTI_COUNT = 28
@@ -78,13 +78,17 @@ export default function RoletaWinCelebration({
     'Prémio'
   const emoji = segment?.emoji ?? null
   const color = segment?.color ?? '#ffca28'
-  const isBau = isBauPrize(segment, result)
+  const reveal = getRevealPrizeMeta(segment, result)
   const loot = result.premiosNormalized ?? []
-  const showChestContents = isBau && loot.length > 0
+  const showRevealContents = Boolean(reveal)
   const showTopRewards =
-    !showChestContents && (result.coins > 0 || result.xp > 0)
+    !showRevealContents && (result.coins > 0 || result.xp > 0)
   const showBonusRewards =
-    showChestContents && (result.coins > 0 || result.xp > 0)
+    showRevealContents && (result.coins > 0 || result.xp > 0)
+  const displayTitle =
+    result.isRandomItem && result.wonItemTitle && !showRevealContents
+      ? result.wonItemTitle
+      : prizeTitle
 
   return (
     <div
@@ -125,8 +129,14 @@ export default function RoletaWinCelebration({
           Ganhou
         </h2>
 
-        {showChestContents ? (
-          <div className="gs-roleta-win-chest">
+        {showRevealContents ? (
+          <div
+            className={`gs-roleta-win-chest${
+              reveal.kind === 'item_aleatorio'
+                ? ' gs-roleta-win-chest--random'
+                : ''
+            }`}
+          >
             <div className="gs-roleta-win-chest-head">
               {segment?.imageUrl ? (
                 <img
@@ -136,13 +146,13 @@ export default function RoletaWinCelebration({
                 />
               ) : (
                 <span className="gs-roleta-win-chest-icon-emoji" aria-hidden>
-                  {emoji || '📦'}
+                  {reveal.iconEmoji || emoji || '🎁'}
                 </span>
               )}
-              <span className="gs-roleta-win-chest-name">{prizeTitle}</span>
+              <span className="gs-roleta-win-chest-name">{reveal.title}</span>
             </div>
 
-            <p className="gs-roleta-win-chest-sub">Dentro do baú:</p>
+            <p className="gs-roleta-win-chest-sub">{reveal.subtitle}</p>
 
             <ul className="gs-roleta-win-loot">
               {loot.map((item, index) => (
@@ -186,7 +196,7 @@ export default function RoletaWinCelebration({
                 ★
               </span>
             )}
-            <span className="gs-roleta-win-prize-name">{prizeTitle}</span>
+            <span className="gs-roleta-win-prize-name">{displayTitle}</span>
           </div>
         )}
 

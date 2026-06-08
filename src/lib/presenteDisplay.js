@@ -50,23 +50,71 @@ export function normalizePresente(p) {
 }
 
 export function normalizeDestinatarioOption(row) {
-  const id = pickId(row, ['id', 'aluno_id', 'destinatario_id'])
-  const nome = pickText(row, ['nome', 'name', 'nome_destino'])
+  if (!row || typeof row !== 'object') return null
+
+  const aluno =
+    row.aluno && typeof row.aluno === 'object' ? row.aluno : null
+  const user = row.user && typeof row.user === 'object' ? row.user : null
+
+  const id = pickId(row, [
+    'id',
+    'aluno_id',
+    'destinatario_id',
+    'user_id',
+  ]) ?? pickId(aluno, ['id', 'aluno_id']) ?? pickId(user, ['id'])
+
+  const nome =
+    pickText(row, ['nome', 'name', 'nome_destino', 'nome_completo']) ||
+    pickText(aluno, ['nome', 'name', 'nome_completo']) ||
+    pickText(user, ['name', 'nome', 'nome_completo'])
+
+  if (!nome) return null
+
   const turmaRef =
     row.turma && typeof row.turma === 'object' ? row.turma : null
-  const turmaNome = pickText(turmaRef ?? row, ['turma_nome', 'nome_turma'], '')
-  const turmaLabel = turmaRef
-    ? pickText(turmaRef, ['nome', 'titulo', 'label'], turmaNome)
-    : turmaNome
+  let turmaLabel = ''
+
+  if (turmaRef) {
+    turmaLabel = pickText(turmaRef, ['nome', 'titulo', 'label'])
+  } else if (typeof row.turma === 'string') {
+    turmaLabel = row.turma.trim()
+  } else if (typeof aluno?.turma === 'string') {
+    turmaLabel = aluno.turma.trim()
+  } else {
+    turmaLabel = pickText(row, ['turma_nome', 'nome_turma'])
+    if (!turmaLabel && aluno?.turma && typeof aluno.turma === 'object') {
+      turmaLabel = pickText(aluno.turma, ['nome', 'titulo', 'label'])
+    }
+  }
 
   return { id, nome, turmaNome: turmaLabel, raw: row }
 }
 
-export function parseDestinatariosResponse(body) {
+function extractDestinatarioRows(body) {
   if (!body) return []
-  if (Array.isArray(body)) return body.map(normalizeDestinatarioOption)
-  if (Array.isArray(body.data)) return body.data.map(normalizeDestinatarioOption)
+  if (Array.isArray(body)) return body
+
+  if (typeof body !== 'object') return []
+
+  if (Array.isArray(body.data)) return body.data
+
+  if (body.data && typeof body.data === 'object') {
+    if (Array.isArray(body.data.data)) return body.data.data
+    if (Array.isArray(body.data.alunos)) return body.data.alunos
+    if (Array.isArray(body.data.destinatarios)) return body.data.destinatarios
+  }
+
+  for (const key of ['alunos', 'destinatarios', 'results']) {
+    if (Array.isArray(body[key])) return body[key]
+  }
+
   return []
+}
+
+export function parseDestinatariosResponse(body) {
+  return extractDestinatarioRows(body)
+    .map(normalizeDestinatarioOption)
+    .filter(Boolean)
 }
 
 /** Monta corpo POST /presentes */

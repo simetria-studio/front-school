@@ -219,6 +219,28 @@
   color: #e65100;
 }
 
+.gs-roleta-win-chest--random .gs-roleta-win-chest-sub {
+  color: #d84315;
+}
+
+.gs-roleta-win-chest--random .gs-roleta-win-chest-icon-emoji {
+  animation: gs-roleta-win-dice-pop 0.7s cubic-bezier(0.22, 1.2, 0.36, 1) 0.25s both;
+}
+
+@keyframes gs-roleta-win-dice-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-25deg);
+  }
+  70% {
+    transform: scale(1.12) rotate(8deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
 .gs-roleta-win-loot {
   list-style: none;
   margin: 0;
@@ -433,6 +455,7 @@
   .gs-roleta-win-card,
   .gs-roleta-win-prize,
   .gs-roleta-win-chest,
+  .gs-roleta-win-chest--random .gs-roleta-win-chest-icon-emoji,
   .gs-roleta-win-loot-item,
   .gs-roleta-win-prize-emoji,
   .gs-roleta-win-prize-img,

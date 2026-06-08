@@ -1,26 +1,22 @@
-/* Tablet — conteúdo interno em largura total */
+/* Tablet — layout em largura total */
+
+.gs-shell,
+.gs-shell-main,
+.gs-shell-main--home,
+.gs-home,
+.gs-home-body,
+.gs-home-topbar {
+  width: 100%;
+  max-width: none;
+}
 
 @media (min-width: 640px) {
   body {
     background: #0a1628;
   }
 
-  #root {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    box-shadow: none;
-  }
-
   .gs-shell {
-    width: 100%;
-    max-width: none;
     padding-bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
-  }
-
-  .gs-shell-main {
-    max-width: none;
-    width: 100%;
   }
 
   .gs-dock {
@@ -33,21 +29,11 @@
     border-radius: 0;
   }
 
-  .gs-home-body {
-    width: 100%;
-    align-self: stretch;
-  }
-
-  .gs-home-actions,
-  .gs-home-greet,
-  .gs-home-hero {
-    width: 100%;
-    max-width: none;
-  }
-
   .gs-home-actions {
-    width: calc(100% - 2rem);
-    max-width: none;
+    width: 100%;
+    max-width: 40rem;
+    padding: 0 1.25rem;
+    box-sizing: border-box;
   }
 
   .gs-inv-top,
@@ -111,7 +97,8 @@
   }
 
   .gs-home-actions {
-    width: calc(100% - 2.5rem);
+    max-width: 44rem;
+    padding: 0 1.5rem;
     gap: 0.65rem;
     margin-top: 1rem;
   }
@@ -173,7 +160,8 @@
   }
 
   .gs-home-actions {
-    width: calc(100% - 3rem);
+    max-width: 48rem;
+    padding: 0 2rem;
   }
 }
 

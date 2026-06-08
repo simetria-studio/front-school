@@ -91,6 +91,9 @@
 }
 
 .gs-gift-panel {
+  position: relative;
+  z-index: 2;
+  overflow: visible;
   padding: 1rem;
   margin-bottom: 1.15rem;
   border-radius: 20px;
@@ -238,13 +241,28 @@
   cursor: pointer;
 }
 
+.gs-gift-autocomplete-status {
+  margin: 0.45rem 0 0;
+  padding: 0.5rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgba(248, 187, 208, 0.82);
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gs-gift-autocomplete-status--error {
+  color: #ffcdd2;
+  border-color: rgba(239, 83, 80, 0.35);
+  background: rgba(198, 40, 40, 0.2);
+}
+
 .gs-gift-autocomplete-list {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(100% + 0.35rem);
+  position: static;
   z-index: 20;
-  margin: 0;
+  margin: 0.45rem 0 0;
   padding: 0.35rem;
   list-style: none;
   border-radius: 14px;
