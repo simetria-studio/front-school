@@ -167,6 +167,27 @@ function RoletaWheelIcon() {
   )
 }
 
+function AlbumIcon() {
+  return (
+    <svg viewBox="0 0 36 36" aria-hidden className="gs-home-action-icon-svg">
+      <circle cx="18" cy="18" r="17" fill="rgba(255,255,255,0.18)" />
+      <rect x="9" y="8" width="18" height="20" rx="2.5" fill="#fff" />
+      <rect x="11" y="10" width="14" height="16" rx="1.5" fill="#fff8e1" />
+      <rect x="13" y="12" width="5" height="5" rx="1" fill="#ffb300" />
+      <rect x="19.5" y="12" width="5" height="5" rx="1" fill="#ff8f00" opacity="0.55" />
+      <rect x="13" y="18.5" width="5" height="5" rx="1" fill="#ff8f00" opacity="0.55" />
+      <rect x="19.5" y="18.5" width="5" height="5" rx="1" fill="#ffb300" />
+      <path
+        d="M9 12h-1.5a1.5 1.5 0 0 0-1.5 1.5v11a1.5 1.5 0 0 0 1.5 1.5H9"
+        fill="none"
+        stroke="#fff"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
 function InventarioIcon() {
   return (
     <svg viewBox="0 0 36 36" aria-hidden className="gs-home-action-icon-svg">
@@ -300,6 +321,15 @@ export default function Dashboard() {
               />
             ) : null}
           </div>
+          {aluno ? (
+            <HomeActionLink
+              to="/figurinhas"
+              label="ÁLBUM"
+              icon={<AlbumIcon />}
+              variant="album"
+              animateClass="gs-home-animate--4"
+            />
+          ) : null}
         </nav>
       </section>
 

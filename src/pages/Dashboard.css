@@ -330,6 +330,15 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
+.gs-home-action-cta--album {
+  background: linear-gradient(180deg, #ffe082 0%, #ffb300 38%, #ff8f00 72%, #e65100 100%);
+  box-shadow:
+    0 4px 0 rgba(191, 54, 12, 0.5),
+    0 8px 22px rgba(255, 152, 0, 0.4),
+    0 0 20px rgba(255, 193, 7, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
 .gs-home-action-cta:hover {
   transform: translateY(-2px);
 }
@@ -355,6 +364,14 @@
     0 5px 0 rgba(0, 96, 100, 0.5),
     0 12px 28px rgba(0, 172, 193, 0.45),
     0 0 24px rgba(77, 208, 225, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.gs-home-action-cta--album:hover {
+  box-shadow:
+    0 5px 0 rgba(191, 54, 12, 0.5),
+    0 12px 28px rgba(255, 152, 0, 0.45),
+    0 0 24px rgba(255, 193, 7, 0.38),
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
