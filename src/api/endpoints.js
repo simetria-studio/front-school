@@ -137,6 +137,10 @@ export function fetchInventario(params) {
   return apiRequest(`/inventario${buildQuery(params)}`)
 }
 
+export function fetchFigurinhas(params) {
+  return apiRequest(`/figurinhas${buildQuery(params)}`)
+}
+
 export function enviarPresente(payload) {
   return apiRequest('/presentes', {
     method: 'POST',

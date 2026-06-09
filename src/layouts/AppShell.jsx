@@ -64,6 +64,7 @@ export default function AppShell() {
     pathname.startsWith('/quizzes') ||
     pathname.startsWith('/roletas') ||
     pathname === '/inventario' ||
+    pathname === '/figurinhas' ||
     pathname === '/presentes'
 
   return (

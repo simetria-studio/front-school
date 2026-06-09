@@ -39,6 +39,9 @@ export default function Conta() {
             <Link className="gs-menu-link" to="/inventario">
               Inventário <span className="gs-chevron">›</span>
             </Link>
+            <Link className="gs-menu-link" to="/figurinhas">
+              Álbum de figurinhas <span className="gs-chevron">›</span>
+            </Link>
             <Link className="gs-menu-link" to="/presentes">
               Presentes <span className="gs-chevron">›</span>
             </Link>

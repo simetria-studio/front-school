@@ -39,6 +39,9 @@
   .gs-inv-top,
   .gs-inv-scroll,
   .gs-inv-footer,
+  .gs-fig-top,
+  .gs-fig-scroll,
+  .gs-fig-footer,
   .gs-gift-top,
   .gs-gift-scroll,
   .gs-gift-footer,
@@ -146,6 +149,7 @@
   }
 
   .gs-inv-body,
+  .gs-fig-body,
   .gs-gift-body,
   .gs-roletas-body,
   .gs-roleta-play-body {

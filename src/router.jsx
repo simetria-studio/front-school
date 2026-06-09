@@ -23,6 +23,7 @@ import RoletaPlay from './pages/RoletaPlay'
 import RoletaGiros from './pages/RoletaGiros'
 import Inventario from './pages/Inventario'
 import Presentes from './pages/Presentes'
+import Figurinhas from './pages/Figurinhas'
 
 function LoginGate({ children }) {
   const { user, ready, sessionRecoverable } = useAuth()
@@ -128,6 +129,7 @@ export default function AppRoutes() {
         <Route path="roletas/:id/giros" element={<RoletaGiros />} />
         <Route path="roletas/:id" element={<RoletaPlay />} />
         <Route path="inventario" element={<Inventario />} />
+        <Route path="figurinhas" element={<Figurinhas />} />
         <Route path="presentes" element={<Presentes />} />
       </Route>
 
