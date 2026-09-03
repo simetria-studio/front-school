@@ -1,29 +1,13 @@
 import { Link } from 'react-router-dom'
-import logo3 from '../assets/logo3.png'
+import logo2 from '../assets/logo2.png'
 import { iconCoin, iconXp } from '../assets/imgs'
 import { useAuth } from '../hooks/useAuth'
 import { formatNumberPt, getGameStats } from '../lib/gameStats'
 import './GameSchoolHeader.css'
 
-function pickAvatar(user) {
-  if (!user || typeof user !== 'object') return null
-  const sources = [user, user.aluno, user.profile, user.student].filter(
-    (s) => s && typeof s === 'object',
-  )
-  const keys = ['avatar_url', 'avatar', 'foto', 'photo', 'imagem', 'image']
-  for (const src of sources) {
-    for (const k of keys) {
-      const v = src[k]
-      if (v && typeof v === 'string') return v
-    }
-  }
-  return null
-}
-
 export default function GameSchoolHeader() {
   const { user } = useAuth()
   const { coins, xp } = getGameStats(user)
-  const avatarSrc = pickAvatar(user) || logo3
 
   return (
     <header className="gs-home-topbar">
@@ -35,7 +19,7 @@ export default function GameSchoolHeader() {
       </div>
       <Link to="/" className="gs-home-logo-link" aria-label="Início">
         <span className="gs-home-avatar-ring">
-          <img className="gs-home-logo-img" src={avatarSrc} alt="" />
+          <img className="gs-home-logo-img" src={logo2} alt="Game School" />
         </span>
       </Link>
       <div className="gs-home-stat gs-home-stat--right">

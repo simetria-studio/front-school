@@ -7,6 +7,21 @@ import './index.css'
 import './styles/responsive.css'
 import App from './App.jsx'
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((regs) => {
+    regs.forEach((reg) => {
+      void reg.unregister()
+    })
+  })
+  if (window.caches) {
+    caches.keys().then((keys) => {
+      keys.forEach((key) => {
+        void caches.delete(key)
+      })
+    })
+  }
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

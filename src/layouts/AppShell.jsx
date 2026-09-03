@@ -65,7 +65,8 @@ export default function AppShell() {
     pathname.startsWith('/roletas') ||
     pathname === '/inventario' ||
     pathname === '/figurinhas' ||
-    pathname === '/presentes'
+    pathname === '/presentes' ||
+    pathname === '/avatar'
 
   return (
     <div className="gs-shell">

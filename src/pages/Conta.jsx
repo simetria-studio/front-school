@@ -36,6 +36,9 @@ export default function Conta() {
         </Link>
         {aluno ? (
           <>
+            <Link className="gs-menu-link" to="/avatar">
+              Meu personagem <span className="gs-chevron">›</span>
+            </Link>
             <Link className="gs-menu-link" to="/inventario">
               Inventário <span className="gs-chevron">›</span>
             </Link>

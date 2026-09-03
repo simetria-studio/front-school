@@ -155,3 +155,18 @@ export function fetchPresenteDestinatarios(params) {
 export function fetchPresentes(params) {
   return apiRequest(`/presentes${buildQuery(params)}`)
 }
+
+export function fetchAvatar() {
+  return apiRequest('/avatar')
+}
+
+export function saveAvatar(payload) {
+  return apiRequest('/avatar', {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function fetchAvatarPecas(params) {
+  return apiRequest(`/avatar/pecas${buildQuery(params)}`)
+}

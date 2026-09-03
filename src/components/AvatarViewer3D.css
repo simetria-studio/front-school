@@ -1,0 +1,49 @@
+.gs-av3d {
+  position: relative;
+  border-radius: 16px;
+  background: #0f2744;
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.28),
+    inset 0 -18px 28px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+.gs-av3d canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.gs-av3d--bare {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.gs-av3d--bare .gs-av3d-fallback,
+.gs-av3d--bare .gs-av3d-error {
+  color: rgba(26, 18, 6, 0.78);
+}
+
+.gs-av3d-fallback,
+.gs-av3d-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  text-align: center;
+  color: rgba(186, 230, 253, 0.85);
+  font-size: 0.85rem;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.gs-av3d-error {
+  color: #fecaca;
+}

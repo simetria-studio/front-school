@@ -95,8 +95,15 @@
     margin-bottom: 1rem;
   }
 
-  .gs-home-star-wrap {
-    width: min(55%, 24rem);
+  .gs-home-char-stage {
+    width: min(88%, 36rem);
+    max-width: 36rem;
+    min-height: 22rem;
+  }
+
+  .gs-home-level-chip {
+    width: min(70%, 28rem);
+    max-width: 28rem;
   }
 
   .gs-home-actions {
@@ -159,8 +166,15 @@
 }
 
 @media (min-width: 1024px) {
-  .gs-home-star-wrap {
-    width: min(50%, 26rem);
+  .gs-home-char-stage {
+    width: min(80%, 40rem);
+    max-width: 40rem;
+    min-height: 24rem;
+  }
+
+  .gs-home-level-chip {
+    width: min(62%, 30rem);
+    max-width: 30rem;
   }
 
   .gs-home-actions {
@@ -180,8 +194,9 @@
     padding: 0;
   }
 
-  .gs-home-star-wrap {
-    width: min(38vh, 18rem);
+  .gs-home-char-stage {
+    width: min(70vh, 26rem);
+    min-height: 14rem;
   }
 
   .gs-home-actions {
