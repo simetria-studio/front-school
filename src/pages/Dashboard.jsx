@@ -94,7 +94,7 @@ export default function Dashboard() {
   const notifQuery = usePendingRewardsQuery(user)
   const [mood, setMood] = useState('idle')
   const [playToken, setPlayToken] = useState(0)
-  const [actionIndex, setActionIndex] = useState(0)
+  const [actionIndex, setActionIndex] = useState(1)
 
   const rawName =
     user?.name ||

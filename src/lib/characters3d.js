@@ -7,6 +7,7 @@ export const CHARACTERS = {
     id: 'modelo4',
     label: 'Modelo 4',
     idleUrl: '/models/modelo4/idle.fbx',
+    homeIdleUrl: '/models/modelo4/arm-stretching.fbx',
     actions: [
       {
         url: '/models/modelo4/arm-stretching.fbx',

@@ -131,7 +131,7 @@ function CharacterStage({
   const character = (
     <group scale={scale} position={[0, 0, 0]}>
       <CharacterLayer
-        src={spec.idleUrl}
+        src={bare && spec.homeIdleUrl ? spec.homeIdleUrl : spec.idleUrl}
         looping
         active={!dancing}
         playToken={0}
@@ -233,6 +233,7 @@ export default function AvatarViewer3D({
   useEffect(() => {
     useTexture.preload(MODEL_DIFFUSE)
     useLoader.preload(FBXLoader, spec.idleUrl)
+    if (spec.homeIdleUrl) useLoader.preload(FBXLoader, spec.homeIdleUrl)
     if (!preloadAction) return
     for (const action of spec.actions || []) {
       useLoader.preload(FBXLoader, action.url)
