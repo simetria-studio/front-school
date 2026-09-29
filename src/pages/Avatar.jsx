@@ -1,32 +1,16 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import AvatarViewer3D from '../components/AvatarViewer3D'
-import { useHomeCharacter } from '../hooks/useHomeCharacter'
-import { CHARACTER_IDS, CHARACTERS } from '../lib/characters3d'
+import { CHARACTERS, actionAt } from '../lib/characters3d'
 import './Avatar.css'
 
 export default function Avatar() {
-  const [homeCharacter, selectCharacter] = useHomeCharacter()
-  const [previewId, setPreviewId] = useState(homeCharacter)
+  const spec = CHARACTERS.modelo4
   const [mood, setMood] = useState('idle')
   const [playToken, setPlayToken] = useState(0)
-  const [msg, setMsg] = useState('')
-
-  const spec = CHARACTERS[previewId] || CHARACTERS.modelo3
-  const selected = homeCharacter === previewId
+  const [actionIndex, setActionIndex] = useState(0)
+  const action = actionAt(spec, actionIndex)
   const dancing = mood === 'dancing'
-
-  function escolher(id) {
-    setPreviewId(id)
-    setMood('idle')
-    setPlayToken(0)
-    setMsg('')
-  }
-
-  function usarNaHome() {
-    selectCharacter(previewId)
-    setMsg(`${spec.label} selecionado`)
-  }
 
   return (
     <div className="gs-av-page">
@@ -37,61 +21,41 @@ export default function Avatar() {
           </Link>
           <div className="gs-av-title-wrap">
             <h1 className="gs-av-title">Meu personagem</h1>
-            <p className="gs-av-subtitle">Escolhe o modelo 3D para a home</p>
+            <p className="gs-av-subtitle">
+              Na home, uma animação toca sozinha a cada 1,5 min
+            </p>
           </div>
         </div>
 
         <div className="gs-av-stage-wrap">
           <AvatarViewer3D
-            key={previewId}
-            characterId={previewId}
+            characterId="modelo4"
             mood={mood}
             playToken={playToken}
+            actionIndex={actionIndex}
             fill
             preloadAction
             enableTouch
-            onActionFinished={() => setMood('idle')}
+            onActionFinished={() => {
+              setMood('idle')
+              setActionIndex((i) => i + 1)
+            }}
           />
-        </div>
-
-        <div className="gs-av-picker" role="tablist" aria-label="Personagens">
-          {CHARACTER_IDS.map((id) => (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              aria-selected={previewId === id}
-              className={previewId === id ? 'is-active' : ''}
-              onClick={() => escolher(id)}
-            >
-              {CHARACTERS[id].label}
-            </button>
-          ))}
         </div>
 
         <div className="gs-av-actions">
           <button
             type="button"
             className="gs-btn gs-btn--primary gs-btn--block"
-            disabled={!spec.actionUrl || dancing}
+            disabled={!action || dancing}
             onClick={() => {
               setPlayToken((n) => n + 1)
               setMood('dancing')
             }}
           >
-            {dancing ? spec.actionBusyLabel : spec.actionLabel}
-          </button>
-          <button
-            type="button"
-            className="gs-btn gs-btn--secondary gs-btn--block"
-            disabled={selected}
-            onClick={usarNaHome}
-          >
-            {selected ? 'Personagem selecionado' : 'Selecionar personagem'}
+            {dancing ? 'A animar…' : action?.label || 'Animar'}
           </button>
         </div>
-
-        {msg ? <p className="gs-av-msg">{msg}</p> : null}
       </div>
     </div>
   )

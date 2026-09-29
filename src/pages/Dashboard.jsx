@@ -1,13 +1,13 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { isAluno } from '../auth/userProfile'
 import AvatarViewer3D from '../components/AvatarViewer3D'
 import GameSchoolHeader from '../components/GameSchoolHeader'
 import RewardCollectionModal from '../components/RewardCollectionModal'
 import { useAuth } from '../hooks/useAuth'
-import { useHomeCharacter } from '../hooks/useHomeCharacter'
 import { usePendingRewardsQuery } from '../hooks/usePendingRewardsQuery'
 import { aggregateRewardCollection } from '../lib/notificationRewards'
+import { ACTION_EVERY_MS } from '../lib/characters3d'
 import { formatNumberPt, getGameStats } from '../lib/gameStats'
 import './Dashboard.css'
 
@@ -91,8 +91,10 @@ function HomeFab({ to, label, icon, variant, className }) {
 
 export default function Dashboard() {
   const { user } = useAuth()
-  const [homeCharacter] = useHomeCharacter()
   const notifQuery = usePendingRewardsQuery(user)
+  const [mood, setMood] = useState('idle')
+  const [playToken, setPlayToken] = useState(0)
+  const [actionIndex, setActionIndex] = useState(0)
 
   const rawName =
     user?.name ||
@@ -124,6 +126,14 @@ export default function Dashboard() {
 
   const aluno = isAluno(user)
 
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setPlayToken((n) => n + 1)
+      setMood('dancing')
+    }, ACTION_EVERY_MS)
+    return () => window.clearInterval(id)
+  }, [])
+
   return (
     <div className="gs-home">
       <GameSchoolHeader />
@@ -137,11 +147,18 @@ export default function Dashboard() {
         <div className="gs-home-hero">
           <div className="gs-home-char-stage">
             <AvatarViewer3D
-              key={homeCharacter}
-              characterId={homeCharacter}
+              characterId="modelo4"
+              mood={mood}
+              playToken={playToken}
+              actionIndex={actionIndex}
               fill
               framed={false}
               enableTouch={false}
+              preloadAction
+              onActionFinished={() => {
+                setMood('idle')
+                setActionIndex((i) => i + 1)
+              }}
             />
             {aluno ? (
               <HomeFab

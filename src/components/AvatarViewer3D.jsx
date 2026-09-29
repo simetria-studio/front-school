@@ -1,5 +1,5 @@
-import { Canvas, useThree } from '@react-three/fiber'
-import { Bounds, OrbitControls, useAnimations, useGLTF, useProgress } from '@react-three/drei'
+import { Canvas, useLoader, useThree } from '@react-three/fiber'
+import { Bounds, OrbitControls, useAnimations, useProgress, useTexture } from '@react-three/drei'
 import {
   Component,
   Suspense,
@@ -8,10 +8,13 @@ import {
   useMemo,
   useRef,
 } from 'react'
-import { LoopOnce, LoopRepeat } from 'three'
+import { LoopOnce, LoopRepeat, SRGBColorSpace } from 'three'
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js'
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js'
-import { CHARACTERS } from '../lib/characters3d'
+import { CHARACTERS, actionAt } from '../lib/characters3d'
 import './AvatarViewer3D.css'
+
+const MODEL_DIFFUSE = '/models/modelo4/texture_diffuse.png'
 
 function CharacterLayer({
   src,
@@ -22,20 +25,30 @@ function CharacterLayer({
   onFinished,
 }) {
   const group = useRef(null)
-  const { scene, animations } = useGLTF(src)
-  const clone = useMemo(() => cloneSkinned(scene), [scene])
-  const { actions, names } = useAnimations(animations, group)
+  const fbx = useLoader(FBXLoader, src)
+  const clone = useMemo(() => cloneSkinned(fbx), [fbx])
+  const { actions, names } = useAnimations(fbx.animations, group)
   const onFinishedRef = useRef(onFinished)
+  const diffuse = useTexture(MODEL_DIFFUSE)
 
   useLayoutEffect(() => {
+    diffuse.colorSpace = SRGBColorSpace
+    diffuse.flipY = true
+    diffuse.needsUpdate = true
     clone.traverse((node) => {
-      if (node.isMesh) {
-        node.castShadow = false
-        node.receiveShadow = false
-        node.frustumCulled = false
+      if (!node.isMesh) return
+      node.castShadow = false
+      node.receiveShadow = false
+      node.frustumCulled = false
+      const materials = Array.isArray(node.material) ? node.material : [node.material]
+      for (const material of materials) {
+        if (!material) continue
+        material.map = diffuse
+        material.color?.set('#ffffff')
+        material.needsUpdate = true
       }
     })
-  }, [clone])
+  }, [clone, diffuse])
 
   useEffect(() => {
     onFinishedRef.current = onFinished
@@ -90,7 +103,7 @@ function CharacterLayer({
   )
 }
 
-const HOME_CAM = { position: [0, 0.98, 3.05], target: [0, 0.88, 0], fov: 33 }
+const HOME_CAM = { position: [0, 1.02, 3.7], target: [0, 0.95, 0], fov: 33 }
 
 function HomeCamera() {
   const { camera } = useThree()
@@ -103,25 +116,34 @@ function HomeCamera() {
   return null
 }
 
-function CharacterStage({ spec, mood, playToken, preloadAction, onActionFinished, bare }) {
-  const dancing = mood === 'dancing' && Boolean(spec.actionUrl)
+function CharacterStage({
+  spec,
+  mood,
+  playToken,
+  actionIndex,
+  preloadAction,
+  onActionFinished,
+  bare,
+}) {
+  const action = actionAt(spec, actionIndex)
+  const dancing = mood === 'dancing' && Boolean(action)
   const scale = spec.scale || 1
   const character = (
-    <group scale={scale} position={[0, bare ? 0.08 : 0, 0]}>
+    <group scale={scale} position={[0, 0, 0]}>
       <CharacterLayer
         src={spec.idleUrl}
         looping
         active={!dancing}
         playToken={0}
-        durationMs={spec.actionDurationMs}
+        durationMs={action?.durationMs}
       />
-      {preloadAction && spec.actionUrl ? (
+      {preloadAction && action ? (
         <CharacterLayer
-          src={spec.actionUrl}
+          src={action.url}
           looping={false}
           active={dancing}
           playToken={playToken}
-          durationMs={spec.actionDurationMs}
+          durationMs={action.durationMs}
           onFinished={onActionFinished}
         />
       ) : null}
@@ -191,9 +213,10 @@ function LoadingBadge() {
 }
 
 export default function AvatarViewer3D({
-  characterId = 'modelo3',
+  characterId = 'modelo4',
   mood = 'idle',
   playToken = 0,
+  actionIndex = 0,
   size = 220,
   fill = false,
   framed = true,
@@ -202,14 +225,18 @@ export default function AvatarViewer3D({
   onActionFinished,
   className = '',
 }) {
-  const spec = CHARACTERS[characterId] || CHARACTERS.modelo3
+  const spec = CHARACTERS[characterId] || CHARACTERS.modelo4
   const style = fill
     ? { width: '100%', height: '100%' }
     : { width: size, height: Math.round(size * (820 / 512)) }
 
   useEffect(() => {
-    useGLTF.preload(spec.idleUrl)
-    if (preloadAction && spec.actionUrl) useGLTF.preload(spec.actionUrl)
+    useTexture.preload(MODEL_DIFFUSE)
+    useLoader.preload(FBXLoader, spec.idleUrl)
+    if (!preloadAction) return
+    for (const action of spec.actions || []) {
+      useLoader.preload(FBXLoader, action.url)
+    }
   }, [spec, preloadAction])
 
   return (
@@ -231,6 +258,7 @@ export default function AvatarViewer3D({
               spec={spec}
               mood={mood}
               playToken={playToken}
+              actionIndex={actionIndex}
               preloadAction={preloadAction}
               onActionFinished={onActionFinished}
               bare={!framed}
