@@ -413,6 +413,14 @@ body {
   display: block;
 }
 
+.gs-scanner-video.is-front {
+  transform: scaleX(-1);
+}
+
+.gs-scanner-switch {
+  margin-top: 0.85rem;
+}
+
 .gs-scanner-overlay {
   position: absolute;
   inset: 0;
